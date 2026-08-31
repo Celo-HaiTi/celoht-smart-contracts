@@ -36,14 +36,14 @@ docs/                  ARCHITECTURE, SECURITY, THREAT_MODEL, DEPLOYMENT,
 ```
 
 ## Core rules
-- No CeloHT token, ever — no ERC-20, governance token, reward token, or staking.
+- No CeloHT token, ever no ERC-20, governance token, reward token, or staking.
 - All payments in USDm; CELO is gas only.
 - 80/20 agent/treasury split on paid P2P and Education-assistance payments, enforced on-chain.
 - Governance: 1 wallet = 1 vote, no token-weighted voting, advisory results.
 - Testnet (Alfajores) first, always. Mainnet is a separate, explicitly gated operation.
 
 ## License
-Apache-2.0 — see `LICENSE`.
+Apache-2.0 - see `LICENSE`.
 
 ## Contact
 contact@celoht.com · celoht3@gmail.com · celoht.com · github.com/Celo-HaiTi
