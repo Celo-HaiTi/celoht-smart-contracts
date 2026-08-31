@@ -10,8 +10,7 @@ verified, and run the quality gate below before trusting this code.
 
 ## ⚠️ Before you deploy to testnet
 Celo has deprecated Alfajores in favor of **Celo Sepolia Testnet**. See
-`docs/DEPLOYMENT.md` → "Network Status Advisory" before choosing a testnet
-— this repo supports both, but only Alfajores has a verified USDm address
+`docs/DEPLOYMENT.md` → "Network Status Advisory" before choosing a testnet this repo supports both, but only Alfajores has a verified USDm address
 in this delivery.
 
 ## Quick start
