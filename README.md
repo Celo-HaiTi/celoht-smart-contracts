@@ -1,7 +1,7 @@
 # CeloHT Smart Contracts
 
 Production-grade Celo protocol infrastructure for CeloHT (Celo-HaiTi):
-Agent Network, Service Payments, Education, Reforestation, and Governance —
+Agent Network, Service Payments, Education, Reforestation, and Governance
 all settled in USDm, with no CeloHT token.
 
 **Status: rebuilt from scratch, source-complete, not yet compiled/tested/deployed
