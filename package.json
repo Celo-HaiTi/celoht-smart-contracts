@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:deployment": "hardhat run checkDeploymentReady.ts --network celoSepolia",
+    "check:wallet": "hardhat run checkWalletBalance.ts --network celoSepolia",
     "deploy:testnet": "hardhat run deployAll.ts --network celoSepolia",
     "deploy:sepolia": "hardhat run deployAll.ts --network celoSepolia",
     "deploy:mainnet": "hardhat run deployAll.ts --network celo",
