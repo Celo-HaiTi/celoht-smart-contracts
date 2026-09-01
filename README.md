@@ -1,46 +1,70 @@
 # CeloHT Smart Contracts
 
-Production-grade Celo protocol infrastructure for CeloHT (Celo-HaiTi):
-Agent Network, Service Payments, Education, Reforestation, and Governance
-all settled in USDm, with no CeloHT token.
+CeloHT is a Celo-native protocol ecosystem for agent coordination, service payments, education support, reforestation incentives, and transparent governance. The system is designed around USDm settlement, with CELO used strictly for gas and network operations.
 
-## Status
+This repository contains the production-ready smart-contract stack and operational tooling for deploying and validating the protocol on supported Celo networks.
 
-✅ Verified locally in this repo on 2026-09-01.
-- Hardhat compile passes
-- Test suite passes: 89 passing
-- Repo is committed and pushed to GitHub
-- Live deployment to Celo Sepolia is prepared, but not operational until the deployer wallet has CELO to pay gas and the human approves the network action
+## Project status
 
-## Deployment status
+Verified in the current repository state as of 2026-09-01:
 
-The repo is ready for a real network deployment once the environment is funded and approved:
-- Sepolia is the active canonical testnet in this repo
-- USDm address for Celo Sepolia is configured to a verified public contract
-- Wallet preflight checks and deployment guards are in place
-- Live deployment still requires a funded deployer wallet and explicit deployment approval
+- Hardhat compilation succeeds
+- Test suite passes: 89 tests passing
+- Repository is committed and pushed to the configured GitHub remote
+- Real deployment is prepared for Celo Sepolia
+- Live deployment remains gated on funded deployer wallet and explicit human approval
 
-## Before you deploy
+## Core protocol principles
 
-1. Copy `.env.example` to `.env` and fill in real values.
-2. Confirm the deployer wallet has CELO on the target network.
-3. Check wallet funding and minimum requirements:
+- No CeloHT token is created or issued
+- No governance token, reward token, or staking token is used
+- USDm is the settlement asset for all functional payments
+- CELO is treated as the network gas asset only
+- On-chain rules enforce service split logic and governance constraints
+- Mainnet deployment is intentionally explicit and not allowed by default
 
-```bash
-npm run check:wallet
-```
+## System components
 
-4. Run the preflight configuration check:
+The protocol is organized around five smart-contract domains:
 
-```bash
-npx hardhat run checkDeploymentReady.ts --network celoSepolia
-```
+1. Agent Registry
+   - Tracks agent identities, role assignments, and registry state
+2. Service Payments
+   - Handles settlement for paid services and split enforcement
+3. Education
+   - Manages educational support and assistance flows
+4. Reforestation
+   - Records and enforces reforestation-related activation and incentives
+5. Governance
+   - Enables wallet-based governance decisions without token-weighted voting
 
-5. If ready, deploy:
+## Network and operational model
 
-```bash
-npx hardhat run deployAll.ts --network celoSepolia
-```
+The repository is configured for Celo-based deployments with Celo Sepolia as the canonical testnet path.
+
+Current production-ready assumptions:
+
+- Sepolia is the active live testnet target in this repo
+- USDm address for Celo Sepolia is set to a verified public contract address
+- Deployment validation scripts enforce address correctness and environment checks
+- A deployer wallet must have sufficient CELO before any real deployment is attempted
+
+## Deployment readiness
+
+The repo is deployment-ready in code and tooling, but not operationally live until all real-world requirements are satisfied:
+
+- valid environment variables loaded from `.env`
+- funded deployer wallet with enough CELO for gas
+- target network selected explicitly
+- human approval to proceed with a live network action
+
+## Prerequisites
+
+- Node.js 18+
+- npm
+- Hardhat project dependencies
+- `.env` file populated from `.env.example`
+- funded wallet on the target network
 
 ## Quick start
 
@@ -52,27 +76,79 @@ npx hardhat test
 npx hardhat coverage
 ```
 
-## Repository layout
+## Before live deployment
 
-```
-contracts/            core Solidity contracts and interfaces
-test/                 Hardhat/TypeScript tests and fixtures
-checkDeploymentReady.ts  preflight wallet/config guard before live deployment
-deployAll.ts          live deployment script
-deployConfig.ts       centralized address validation for real networks
-verifyContracts.ts    contract verification flow
-artifacts/            generated compile artifacts
+1. Copy the example environment file and configure the real values:
+
+```bash
+cp .env.example .env
 ```
 
-## Core rules
-- No CeloHT token, ever: no ERC-20, governance token, reward token, or staking.
-- All payments in USDm; CELO is gas only.
-- 80/20 agent/treasury split on paid P2P and Education assistance payments, enforced on-chain.
-- Governance: 1 wallet = 1 vote, no token-weighted voting, advisory results.
-- Celo Sepolia is the canonical testnet path in this repo; mainnet is a separate explicit operation.
+2. Make sure the deployer wallet has CELO for gas on the selected network.
+
+3. Check wallet funding and recommended minimum balance:
+
+```bash
+npm run check:wallet
+```
+
+4. Run the deployment preflight validation:
+
+```bash
+npx hardhat run checkDeploymentReady.ts --network celoSepolia
+```
+
+5. Deploy the full protocol suite:
+
+```bash
+npx hardhat run deployAll.ts --network celoSepolia
+```
+
+## Repository structure
+
+```text
+.
+├── contracts/                    # Solidity contracts and interfaces
+├── test/                        # Hardhat and TypeScript tests
+├── .env.example                 # Deployment environment template
+├── checkDeploymentReady.ts      # Preflight validation for funded deployment
+├── checkWalletBalance.ts        # Wallet balance and minimum-funding check
+├── deployAll.ts                 # Full protocol deployment script
+├── deployConfig.ts              # Centralized config validation for real networks
+├── hardhat.config.ts            # Hardhat network and verification config
+├── verifyContracts.ts           # Contract verification flow
+├── package.json                 # Scripts and dependencies
+├── README.md                    # Repository documentation
+├── LICENSE                      # Apache-2.0 license
+├── artifacts/                   # Generated compiler output
+└── fixtures.ts                  # Test fixtures and shared setup
+```
+
+## Security and governance guardrails
+
+The contracts and deployment workflow include deliberate safeguards to encourage safe, responsible protocol operation:
+
+- strict address validation for environment configuration
+- real-network deployment guardrails
+- wallet balance checks before execution
+- no implicit mainnet deployment path
+- explicit operational approval before live deployment
+
+## Contract verification
+
+After deployment, verification should be performed using the project verification workflow and the correct network configuration.
+
+## Contribution
+
+This repository is intended for controlled protocol deployment and audited operational workflows. Contributions should be reviewed carefully, with emphasis on security, correctness, and deployment safety.
 
 ## License
-Apache-2.0 - see `LICENSE`.
+
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ## Contact
-contact@celoht.com · celoht3@gmail.com · celoht.com · github.com/Celo-HaiTi
+
+- Email: contact@celoht.com
+- Email: celoht3@gmail.com
+- Web: celoht.com
+- GitHub: github.com/Celo-HaiTi
