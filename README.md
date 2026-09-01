@@ -4,14 +4,16 @@ Production-grade Celo protocol infrastructure for CeloHT (Celo-HaiTi):
 Agent Network, Service Payments, Education, Reforestation, and Governance
 all settled in USDm, with no CeloHT token.
 
-**Status: rebuilt from scratch, source-complete, not yet compiled/tested/deployed
-in this delivery.** See `docs/SECURITY.md` for exactly what has and hasn't been
-verified, and run the quality gate below before trusting this code.
+**Status: compiled and test-passing in this session; no real network deployment was
+performed.** The contract suite and invariants were executed locally and passed on
+2026-09-01. Real deployment and on-chain verification remain gated behind a
+verified environment and an explicit human deployment decision.
 
 ## ⚠️ Before you deploy to testnet
 Celo has deprecated Alfajores in favor of **Celo Sepolia Testnet**. See
-`docs/DEPLOYMENT.md` → "Network Status Advisory" before choosing a testnet this repo supports both, but only Alfajores has a verified USDm address
-in this delivery.
+`DEPLOYMENT.md` → "Network Status Advisory" before choosing a testnet. This repo
+supports both network labels in config, but only a verified USDm address should be
+used for a real deployment.
 
 ## Quick start
 
@@ -28,10 +30,9 @@ npx hardhat coverage
 ```
 contracts/            5 core contracts + interfaces + test-only mocks
 test/                 Hardhat/TypeScript test suite (per-contract + invariant sweep)
-scripts/               deployAll / configureContracts / verifyContracts / exportDeployment
-deployments/           machine-readable manifests (empty until a real deployment runs)
-docs/                  ARCHITECTURE, SECURITY, THREAT_MODEL, DEPLOYMENT,
-                        PROTOCOL_SPECIFICATION, DUNE_ANALYTICS, ENGINEERING_ASSESSMENT
+root files            deployAll.ts / configureContracts.ts / verifyContracts.ts / exportDeployment.ts / deployConfig.ts
+artifacts/            generated compile artifacts
+typechain-types/      generated ethers-v6 typings
 ```
 
 ## Core rules

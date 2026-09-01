@@ -2,7 +2,7 @@ import { ethers, network } from "hardhat";
 import * as fs from "fs";
 import * as path from "path";
 import { execSync } from "child_process";
-import { loadDeploymentConfig } from "../config/deployConfig";
+import { loadDeploymentConfig } from "./deployConfig";
 
 /**
  * Deploys the full CeloHT protocol contract set to the configured network.

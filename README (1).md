@@ -20,10 +20,10 @@ To produce a real manifest:
 cp .env.example .env   # fill in DEPLOYER_PRIVATE_KEY, RPC URLs
                         # (GENERAL_TREASURY, EDUCATION_TREASURY, REFORESTATION_TREASURY,
                         # GOVERNANCE_TREASURY, and USDM_ADDRESS_CELO are pre-filled with
-                        # verified/confirmed values — see docs/ARCHITECTURE.md)
+                        # verified/confirmed values — see ARCHITECTURE.md)
 npm install
-npx hardhat run scripts/deployAll.ts --network alfajores
-npx hardhat run scripts/configureContracts.ts --network alfajores
-npx hardhat run scripts/verifyContracts.ts --network alfajores
-npx hardhat run scripts/exportDeployment.ts
+npx hardhat run deployAll.ts --network alfajores
+npx hardhat run configureContracts.ts --network alfajores
+npx hardhat run verifyContracts.ts --network alfajores
+npx hardhat run exportDeployment.ts
 ```
