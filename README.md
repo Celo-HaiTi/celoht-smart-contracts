@@ -24,13 +24,19 @@ The repo is ready for a real network deployment once the environment is funded a
 
 1. Copy `.env.example` to `.env` and fill in real values.
 2. Confirm the deployer wallet has CELO on the target network.
-3. Run the preflight check:
+3. Check wallet funding and minimum requirements:
+
+```bash
+npm run check:wallet
+```
+
+4. Run the preflight configuration check:
 
 ```bash
 npx hardhat run checkDeploymentReady.ts --network celoSepolia
 ```
 
-4. If ready, deploy:
+5. If ready, deploy:
 
 ```bash
 npx hardhat run deployAll.ts --network celoSepolia
