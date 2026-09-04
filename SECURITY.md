@@ -8,6 +8,8 @@
 | Test suite covering the invariants in section 18 of the spec | Implemented                     |
 | `npx hardhat compile` actually run in this delivery          | **Executed successfully**       |
 | `npx hardhat test` / coverage actually run                   | **Executed successfully**       |
+| Randomized property test                                     | **Executed successfully**       |
+| CI quality gates                                             | **Configured**                  |
 | Slither / static analysis actually run                       | **Not executed**                |
 | Independent third-party audit                                | **Not performed. Not claimed.** |
 | Testnet deployment                                           | **Not performed**               |
@@ -70,12 +72,11 @@ Report back and this can be corrected quickly rather than papered over.
 
 ## Explicitly NOT done here (and why)
 
-- **Fuzzing (Echidna/Foundry)**: this is a Hardhat/TypeScript project per the
-  spec; true property-based fuzzing tooling for Solidity (Echidna, Foundry's
-  `forge test --fuzz`) is a different toolchain. `test/InvariantSweep.test.ts`
-  provides a bounded parameter sweep as a partial substitute. Recommend
-  adding a Foundry-based fuzz suite as a follow-up if deeper fuzzing is
-  wanted — flag this explicitly rather than claim fuzzing was done.
+- **Fuzzing (Echidna/Foundry)**: true Echidna and Foundry campaigns are not
+  installed or executed in this repository yet. `test/InvariantSweep.test.ts`
+  provides a bounded parameter sweep, and `test/PropertyFuzz.test.ts`
+  executes 100 deterministic randomized price/split cases as an additional
+  regression layer. Add a Foundry/Echidna campaign before mainnet.
 - **Slither / dependency audit**: requires `pip`/`slither-analyzer` and
   `npm audit` against a real `node_modules`, neither available here.
 - **Independent audit**: out of scope for an AI coding session by
