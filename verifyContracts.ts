@@ -30,6 +30,10 @@ async function verifyOne(
 }
 
 async function main() {
+  if (network.name !== "celoSepolia") {
+    throw new Error("Contract verification requires the celoSepolia network.");
+  }
+
   const manifestPath = path.join(
     __dirname,
     "deployments",

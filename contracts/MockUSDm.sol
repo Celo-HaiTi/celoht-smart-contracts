@@ -5,7 +5,7 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 /// @title MockUSDm
 /// @notice Test-only stand-in for the real USDm token (18 decimals, same as
-///         the verified Celo mainnet USDm/cUSD contract). NOT for
+///         a verified USDm contract). NOT for
 ///         deployment — tests only.
 contract MockUSDm is ERC20 {
     constructor() ERC20("Mock USDm", "USDm") {}

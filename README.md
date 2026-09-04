@@ -131,7 +131,7 @@ The contracts and deployment workflow include deliberate safeguards to encourage
 - strict address validation for environment configuration
 - real-network deployment guardrails
 - wallet balance checks before execution
-- no implicit mainnet deployment path
+- Celo Sepolia is the only configured live deployment target
 - explicit operational approval before live deployment
 
 ## Contract verification

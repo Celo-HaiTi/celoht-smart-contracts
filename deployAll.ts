@@ -8,9 +8,7 @@ import { loadDeploymentConfig } from "./deployConfig";
  * Deploys the full CeloHT protocol contract set to the configured network.
  *
  * SAFETY:
- * - Refuses to run against `celo` (mainnet) unless MAINNET_DEPLOY_CONFIRM=YES
- *   is explicitly set in the environment, per docs/DEPLOYMENT.md ("Mainnet
- *   deployment is a separate explicit operation").
+ * - Only Celo Sepolia (chain ID 11142220) is an accepted deployment target.
  * - All addresses (USDm, all four treasuries) are loaded and validated
  *   through the single centralized config/deployConfig.ts module — this
  *   script does not read process.env directly and does not duplicate any
@@ -28,18 +26,28 @@ const FEES = {
 };
 
 async function main() {
-  const isMainnet = network.name === "celo";
-  if (isMainnet && process.env.MAINNET_DEPLOY_CONFIRM !== "YES") {
+  if (network.name !== "celoSepolia") {
     throw new Error(
-      "Refusing to deploy to Celo Mainnet. Mainnet deployment requires an explicit, separate " +
-        "operation: set MAINNET_DEPLOY_CONFIRM=YES only after the full quality gate, security " +
-        "review, testnet integration testing, and explicit human approval described in " +
-        "docs/DEPLOYMENT.md have been completed.",
+      "Refusing deployment: this repository targets Celo Sepolia only. " +
+        "Use --network celoSepolia.",
     );
   }
 
   const [deployer] = await ethers.getSigners();
   const chainId = (await ethers.provider.getNetwork()).chainId;
+
+  if (chainId !== 11142220n) {
+    throw new Error(`Refusing deployment on unexpected chain ID ${chainId}.`);
+  }
+
+  const balance = await ethers.provider.getBalance(deployer.address);
+  const minimumBalance = ethers.parseEther("0.01");
+  if (balance < minimumBalance) {
+    throw new Error(
+      `Insufficient deployer CELO balance: ${ethers.formatEther(balance)} CELO. ` +
+        `At least ${ethers.formatEther(minimumBalance)} CELO is required.`,
+    );
+  }
 
   console.log(`Network: ${network.name} (chainId ${chainId})`);
   console.log(`Deployer: ${deployer.address}`);
@@ -52,14 +60,10 @@ async function main() {
   let reforestationTreasury = cfg.reforestationTreasury;
   let governanceTreasury = cfg.governanceTreasury;
 
-  if (
-    network.name !== "celo" &&
-    network.name !== "alfajores" &&
-    network.name !== "celoSepolia"
-  ) {
+  if (network.name !== "celoSepolia") {
     // Local/hardhat network: no real USDm or treasury exists. Deploy a mock
     // token and use the deployer as a stand-in treasury for local testing
-    // only — this path is never reachable for celo/alfajores/mainnet.
+    // only — this path is never reachable for Celo Sepolia.
     const mockUsdm = await (
       await ethers.getContractFactory("MockUSDm")
     ).deploy();

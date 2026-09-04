@@ -97,7 +97,7 @@ is duplicated across files. `loadDeploymentConfig(networkName)`:
   network (per-network, since the two are genuinely different contracts on
   different chains — collapsing them into one variable would be incorrect);
 - requires all four `*_TREASURY` variables for any real network (`celo` or
-  `alfajores`) and validates each is a well-formed, non-zero address;
+  `celoSepolia`) and validates each is a well-formed, non-zero address;
 - throws a clear, explicit error and refuses to proceed if anything is
   missing or malformed — it never substitutes a different address.
 

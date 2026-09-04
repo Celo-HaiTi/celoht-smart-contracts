@@ -4,12 +4,10 @@ async function main() {
   const [signer] = await ethers.getSigners();
   const address = signer.address;
   const balance = await ethers.provider.getBalance(address);
-  const nativeSymbol =
-    network.name === "celo"
-      ? "CELO"
-      : network.name === "celoSepolia"
-        ? "CELO"
-        : "ETH";
+  if (network.name !== "celoSepolia") {
+    throw new Error("Wallet validation requires the celoSepolia network.");
+  }
+  const nativeSymbol = "CELO";
 
   console.log("=== Wallet balance check ===");
   console.log(`Network: ${network.name}`);
@@ -23,7 +21,7 @@ async function main() {
   );
 
   if (balance < minRequired) {
-    console.warn(
+    console.error(
       `WARNING: balance is below the recommended minimum for deployment. ` +
         `Fund this wallet before attempting a live deploy on ${network.name}.`,
     );
