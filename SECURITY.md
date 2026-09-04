@@ -9,6 +9,8 @@
 | `npx hardhat compile` actually run in this delivery          | **Executed successfully**       |
 | `npx hardhat test` / coverage actually run                   | **Executed successfully**       |
 | Randomized property test                                     | **Executed successfully**       |
+| Foundry fuzz test                                            | **Executed successfully**       |
+| Echidna property campaign                                    | **Executed successfully**       |
 | CI quality gates                                             | **Configured**                  |
 | Slither / static analysis actually run                       | **Not executed**                |
 | Independent third-party audit                                | **Not performed. Not claimed.** |
@@ -72,11 +74,12 @@ Report back and this can be corrected quickly rather than papered over.
 
 ## Explicitly NOT done here (and why)
 
-- **Fuzzing (Echidna/Foundry)**: true Echidna and Foundry campaigns are not
-  installed or executed in this repository yet. `test/InvariantSweep.test.ts`
-  provides a bounded parameter sweep, and `test/PropertyFuzz.test.ts`
-  executes 100 deterministic randomized price/split cases as an additional
-  regression layer. Add a Foundry/Echidna campaign before mainnet.
+- **Fuzzing (Echidna/Foundry)**: Foundry fuzzes the split invariant for 10,000
+  randomized amount/BPS cases through `test/foundry/SplitInvariant.t.sol`.
+  Echidna independently runs the stateful property in
+  `test/echidna/SplitInvariant.sol`. These campaigns cover the arithmetic
+  invariant; they do not replace a full stateful protocol fuzz suite or an
+  independent audit.
 - **Slither / dependency audit**: requires `pip`/`slither-analyzer` and
   `npm audit` against a real `node_modules`, neither available here.
 - **Independent audit**: out of scope for an AI coding session by

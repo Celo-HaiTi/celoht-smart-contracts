@@ -9,3 +9,6 @@ dist
 .DS_Store
 *.log
 deployments/*.local.json
+out
+forge-cache
+crytic-export

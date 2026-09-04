@@ -4,6 +4,7 @@ pragma solidity ^0.8.24;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {ICeloHTServicePayments} from "./interfaces/ICeloHTServicePayments.sol";
 import {ICeloHTAgentRegistry} from "./interfaces/ICeloHTAgentRegistry.sol";
 
@@ -106,7 +107,11 @@ contract CeloHTServicePayments is ICeloHTServicePayments, AccessControl {
         // Effects are already recorded above; pull funds directly to final
         // recipients to avoid holding an intermediate balance in this
         // contract (checks-effects-interactions).
-        uint256 agentShare = (amount * agentShareBps) / BPS_DENOMINATOR;
+        uint256 agentShare = Math.mulDiv(
+            amount,
+            agentShareBps,
+            BPS_DENOMINATOR
+        );
         uint256 treasuryShare = amount - agentShare; // guarantees full accounting, no dust loss
 
         _transferExact(msg.sender, agent.wallet, agentShare);
