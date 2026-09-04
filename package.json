@@ -9,6 +9,8 @@
     "clean": "hardhat clean",
     "test": "hardhat test",
     "coverage": "hardhat coverage",
+    "fuzz:foundry": "forge test --root . --match-contract SplitInvariantTest",
+    "fuzz:echidna": "echidna test/echidna/SplitInvariant.sol --contract SplitInvariant --test-mode property --test-limit 10000 --disable-slither --solc-args \"--base-path . --include-path node_modules\"",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

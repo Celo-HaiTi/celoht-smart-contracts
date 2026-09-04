@@ -4,4 +4,6 @@ cache/
 coverage/
 typechain-types/
 dist/
+out/
+crytic-export/
 package-lock.json
