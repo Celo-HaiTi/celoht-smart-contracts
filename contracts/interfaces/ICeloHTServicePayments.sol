@@ -36,22 +36,34 @@ interface ICeloHTServicePayments {
         uint256 treasuryShare
     );
 
-    event ServicePriceUpdated(ServiceType indexed serviceType, uint256 oldPrice, uint256 newPrice);
-    event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
+    event ServicePriceUpdated(
+        ServiceType indexed serviceType,
+        uint256 oldPrice,
+        uint256 newPrice
+    );
+    event TreasuryUpdated(
+        address indexed oldTreasury,
+        address indexed newTreasury
+    );
     event SplitUpdated(uint16 oldAgentBps, uint16 newAgentBps);
 
     error WrongToken(address expected, address provided);
     error IncorrectAmount(uint256 expected, uint256 provided);
     error AgentNotFound(uint256 agentId);
     error AgentInactive(uint256 agentId);
+    error PaymentNotFound(uint256 paymentId);
     error ZeroAddress();
     error InvalidBps(uint16 bps);
 
-    function payForService(ServiceType serviceType, uint256 agentId)
-        external
-        returns (uint256 paymentId);
+    function payForService(
+        ServiceType serviceType,
+        uint256 agentId
+    ) external returns (uint256 paymentId);
 
-    function setServicePrice(ServiceType serviceType, uint256 newPrice) external;
+    function setServicePrice(
+        ServiceType serviceType,
+        uint256 newPrice
+    ) external;
 
     function setTreasury(address newTreasury) external;
 
@@ -59,5 +71,7 @@ interface ICeloHTServicePayments {
 
     function priceOf(ServiceType serviceType) external view returns (uint256);
 
-    function getPayment(uint256 paymentId) external view returns (Payment memory);
+    function getPayment(
+        uint256 paymentId
+    ) external view returns (Payment memory);
 }

@@ -20,6 +20,7 @@ official docs first), the honest summary is: **Alfajores is officially
 being sunset, but was not fully dead at verification time.**
 
 Practical guidance:
+
 - `hardhat.config.ts` now defines all three networks: `alfajores` (legacy,
   at-risk), `celoSepolia` (Celo's recommended replacement), and `celo`
   (Mainnet).
@@ -35,23 +36,23 @@ Practical guidance:
 
 ## Order of operations (do not skip steps)
 
-1. **Local quality gate** — run everything in `docs/SECURITY.md`'s command
+1. **Local quality gate** — run everything in `SECURITY.md`'s command
    block locally. Fix all compile errors and failing tests first.
-2. **Testnet first, always.** Deploy to Alfajores (`--network alfajores`).
+2. **Testnet first, always.** Deploy to Celo Sepolia (`--network celoSepolia`).
    Never deploy to Mainnet directly.
-3. Run `scripts/configureContracts.ts` against the testnet deployment and
+3. Run `configureContracts.ts` against the testnet deployment and
    confirm every treasury address matches what you intended.
-4. Run `scripts/verifyContracts.ts` against testnet and confirm Celoscan
+4. Run `verifyContracts.ts` against testnet and confirm Celoscan
    reports the contracts as verified — check the explorer yourself, don't
    just trust the script's console output.
 5. Exercise every flow for real on testnet: agent registration, a P2P
    payment, an Education payment, certificate fee + issuance + verification
-   + revocation, a reforestation donation, and a full governance proposal
-   lifecycle (create → vote YES/NO/ABSTAIN → finalize).
+   - revocation, a reforestation donation, and a full governance proposal
+     lifecycle (create → vote YES/NO/ABSTAIN → finalize).
 6. Only after all of the above is genuinely done — plus a security review
    and, ideally, an independent audit — consider Mainnet.
 7. Mainnet deployment requires `MAINNET_DEPLOY_CONFIRM=YES` to be set
-   explicitly (see `scripts/deployAll.ts`); the script refuses to run
+   explicitly (see `deployAll.ts`); the script refuses to run
    against `celo` network otherwise. This is a deliberate friction point,
    not a bug.
 8. After a real Mainnet deployment: verify source code, confirm optimizer

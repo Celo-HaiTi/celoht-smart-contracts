@@ -1,11 +1,11 @@
 # CeloHT Smart Contracts — Architecture
 
 ## Status legend
+
 Every claim in this document set uses one of these words deliberately:
 **Implemented** · **Tested** · **Deployed** · **Verified** · **Audited** · **Pending**
 
-As of this delivery: contracts are **Implemented**. A test suite is **Implemented**
-(not yet run in this environment — see docs/SECURITY.md). Nothing is **Deployed**,
+As of this delivery: contracts are **Implemented** and **Tested**. Nothing is **Deployed**,
 **Verified**, or **Audited**.
 
 ## Contracts
@@ -30,9 +30,9 @@ USDm with an 80/20 agent/treasury split, while section 11 (Education) also
 references a 0.020 USDm "Education assistance" fee alongside a separate 0.010
 USDm certificate fee. Rather than duplicate payment logic:
 
-- **CeloHTServicePayments** owns the *agent-mediated* Education assistance
+- **CeloHTServicePayments** owns the _agent-mediated_ Education assistance
   payment (0.020 USDm, 80/20 split) — because it is agent-mediated, like P2P.
-- **CeloHTEducation** owns the *certificate* fee and lifecycle exclusively
+- **CeloHTEducation** owns the _certificate_ fee and lifecycle exclusively
   (0.010 USDm, 100% to `EDUCATION_TREASURY`) — because certificate issuance
   is not agent-mediated and has no split.
 
@@ -48,6 +48,7 @@ no code path that accepts an arbitrary ERC-20.
 
 USDm addresses (verified via CeloScan on 2026-08-30 — see `.env.example` for
 full source notes):
+
 - Mainnet: `0x765DE816845861e75A25fCA122bb6898B8B1282a` (the same proxy
   contract formerly labeled cUSD, rebranded "Mento Dollar (USDm)" by Mento).
 - Alfajores testnet: `0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1` (confirmed
@@ -66,7 +67,7 @@ CeloHT Treasury Safe (confirmed): `0xd856e0599cc49C9cef6C358d2c2f064112A6b384`
 `GOVERNANCE_TREASURY` — are intentionally configured to this same confirmed
 Safe address. This is a deliberate, documented decision, not a missing
 value: CeloHT currently operates one treasury Safe, and the protocol splits
-payment flows into four *logical* categories on-chain (via four independent
+payment flows into four _logical_ categories on-chain (via four independent
 `treasury` state variables, one per contract) without requiring four
 physical Safes to exist yet.
 
@@ -149,20 +150,20 @@ is young; `DEFAULT_ADMIN_ROLE` can widen this role over time).
   `TREASURY_ADMIN_ROLE`, reject the zero address, and emit an event.
 - Treasury custody itself (the Safe at `GENERAL_TREASURY`) is external to
   this repository and remains multisig-controlled; these contracts only ever
-  transfer funds *to* configured treasury addresses, never manage the
+  transfer funds _to_ configured treasury addresses, never manage the
   treasury's own multisig logic.
 
 ## Access control
 
-| Role | Held by (initial) | Controls |
-|---|---|---|
-| `DEFAULT_ADMIN_ROLE` | deployer/admin | role assignment |
-| `AGENT_ADMIN_ROLE` | admin | agent status/verification, registration fee |
-| `TREASURY_ADMIN_ROLE` | admin | treasury address (per contract) |
-| `FEE_ADMIN_ROLE` | admin | service/certificate prices, split bps |
-| `EDUCATION_ISSUER_ROLE` | admin | certificate issuance/revocation |
-| `GOVERNANCE_ADMIN_ROLE` | admin | participation fee |
-| `PROPOSER_ROLE` | admin | proposal creation |
+| Role                    | Held by (initial) | Controls                                    |
+| ----------------------- | ----------------- | ------------------------------------------- |
+| `DEFAULT_ADMIN_ROLE`    | deployer/admin    | role assignment                             |
+| `AGENT_ADMIN_ROLE`      | admin             | agent status/verification, registration fee |
+| `TREASURY_ADMIN_ROLE`   | admin             | treasury address (per contract)             |
+| `FEE_ADMIN_ROLE`        | admin             | service/certificate prices, split bps       |
+| `EDUCATION_ISSUER_ROLE` | admin             | certificate issuance/revocation             |
+| `GOVERNANCE_ADMIN_ROLE` | admin             | participation fee                           |
+| `PROPOSER_ROLE`         | admin             | proposal creation                           |
 
 In production, `DEFAULT_ADMIN_ROLE` and the specialized admin roles should be
 transferred to the Maintainer Council's Safe rather than remain on a single

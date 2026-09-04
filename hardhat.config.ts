@@ -27,7 +27,9 @@ const config: HardhatUserConfig = {
     // as at-risk — confirm current status at docs.celo.org/network before relying on
     // it for real testnet work. See docs/DEPLOYMENT.md "Network Status Advisory".
     alfajores: {
-      url: process.env.ALFAJORES_RPC_URL || "https://alfajores-forno.celo-testnet.org",
+      url:
+        process.env.ALFAJORES_RPC_URL ||
+        "https://alfajores-forno.celo-testnet.org",
       chainId: 44787,
       accounts,
     },
@@ -36,7 +38,9 @@ const config: HardhatUserConfig = {
     // providers). USDM_ADDRESS_CELO_SEPOLIA is NOT independently verified in this
     // delivery — see .env.example. Do not deploy here until that address is confirmed.
     celoSepolia: {
-      url: process.env.CELO_SEPOLIA_RPC_URL || "https://forno.celo-sepolia.celo-testnet.org",
+      url:
+        process.env.CELO_SEPOLIA_RPC_URL ||
+        "https://forno.celo-sepolia.celo-testnet.org",
       chainId: 11142220,
       accounts,
     },

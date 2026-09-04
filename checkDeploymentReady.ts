@@ -12,20 +12,38 @@ async function main() {
   console.log(`USDm: ${cfg.usdm}`);
   console.log(`Treasury: ${cfg.generalTreasury}`);
 
-  if (network.name !== "celoSepolia" && network.name !== "alfajores" && network.name !== "celo") {
-    console.warn("Local or non-production network detected; deployment is not live-network ready.");
+  if (
+    network.name !== "celoSepolia" &&
+    network.name !== "alfajores" &&
+    network.name !== "celo"
+  ) {
+    console.warn(
+      "Local or non-production network detected; deployment is not live-network ready.",
+    );
     return;
   }
 
   if (balance === 0n) {
-    throw new Error("Deployer wallet has zero CELO balance on the target network. Fund the wallet before deployment.");
+    throw new Error(
+      "Deployer wallet has zero CELO balance on the target network. Fund the wallet before deployment.",
+    );
   }
 
-  if (!cfg.usdm || !cfg.generalTreasury || !cfg.educationTreasury || !cfg.reforestationTreasury || !cfg.governanceTreasury) {
-    throw new Error("One or more deployment addresses are missing. Fill in .env and rerun the check.");
+  if (
+    !cfg.usdm ||
+    !cfg.generalTreasury ||
+    !cfg.educationTreasury ||
+    !cfg.reforestationTreasury ||
+    !cfg.governanceTreasury
+  ) {
+    throw new Error(
+      "One or more deployment addresses are missing. Fill in .env and rerun the check.",
+    );
   }
 
-  console.log("Preflight checks passed: live-network config and wallet funds are present.");
+  console.log(
+    "Preflight checks passed: live-network config and wallet funds are present.",
+  );
 }
 
 main().catch((error) => {

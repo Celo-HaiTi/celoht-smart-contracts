@@ -15,11 +15,18 @@ interface ICeloHTAgentRegistry {
         bool verified;
     }
 
-    event AgentRegistered(uint256 indexed agentId, address indexed wallet, uint64 timestamp);
+    event AgentRegistered(
+        uint256 indexed agentId,
+        address indexed wallet,
+        uint64 timestamp
+    );
     event AgentStatusUpdated(uint256 indexed agentId, bool active);
     event AgentVerificationUpdated(uint256 indexed agentId, bool verified);
     event RegistrationFeeUpdated(uint256 oldFee, uint256 newFee);
-    event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
+    event TreasuryUpdated(
+        address indexed oldTreasury,
+        address indexed newTreasury
+    );
 
     error ZeroAddress();
     error AlreadyRegistered(address wallet);

@@ -34,7 +34,7 @@ async function main() {
       "Refusing to deploy to Celo Mainnet. Mainnet deployment requires an explicit, separate " +
         "operation: set MAINNET_DEPLOY_CONFIRM=YES only after the full quality gate, security " +
         "review, testnet integration testing, and explicit human approval described in " +
-        "docs/DEPLOYMENT.md have been completed."
+        "docs/DEPLOYMENT.md have been completed.",
     );
   }
 
@@ -52,11 +52,17 @@ async function main() {
   let reforestationTreasury = cfg.reforestationTreasury;
   let governanceTreasury = cfg.governanceTreasury;
 
-  if (network.name !== "celo" && network.name !== "alfajores" && network.name !== "celoSepolia") {
+  if (
+    network.name !== "celo" &&
+    network.name !== "alfajores" &&
+    network.name !== "celoSepolia"
+  ) {
     // Local/hardhat network: no real USDm or treasury exists. Deploy a mock
     // token and use the deployer as a stand-in treasury for local testing
     // only — this path is never reachable for celo/alfajores/mainnet.
-    const mockUsdm = await (await ethers.getContractFactory("MockUSDm")).deploy();
+    const mockUsdm = await (
+      await ethers.getContractFactory("MockUSDm")
+    ).deploy();
     await mockUsdm.waitForDeployment();
     usdmAddress = await mockUsdm.getAddress();
     generalTreasury = deployer.address;
@@ -74,7 +80,12 @@ async function main() {
 
   // --- Deploy ---
   const Registry = await ethers.getContractFactory("CeloHTAgentRegistry");
-  const registry = await Registry.deploy(usdmAddress, generalTreasury, FEES.registration, deployer.address);
+  const registry = await Registry.deploy(
+    usdmAddress,
+    generalTreasury,
+    FEES.registration,
+    deployer.address,
+  );
   await registry.waitForDeployment();
   console.log(`CeloHTAgentRegistry: ${await registry.getAddress()}`);
 
@@ -85,23 +96,37 @@ async function main() {
     generalTreasury,
     deployer.address,
     FEES.p2p,
-    FEES.education
+    FEES.education,
   );
   await payments.waitForDeployment();
   console.log(`CeloHTServicePayments: ${await payments.getAddress()}`);
 
   const Education = await ethers.getContractFactory("CeloHTEducation");
-  const education = await Education.deploy(usdmAddress, educationTreasury, FEES.certificate, deployer.address);
+  const education = await Education.deploy(
+    usdmAddress,
+    educationTreasury,
+    FEES.certificate,
+    deployer.address,
+  );
   await education.waitForDeployment();
   console.log(`CeloHTEducation: ${await education.getAddress()}`);
 
   const Reforestation = await ethers.getContractFactory("CeloHTReforestation");
-  const reforestation = await Reforestation.deploy(usdmAddress, reforestationTreasury, deployer.address);
+  const reforestation = await Reforestation.deploy(
+    usdmAddress,
+    reforestationTreasury,
+    deployer.address,
+  );
   await reforestation.waitForDeployment();
   console.log(`CeloHTReforestation: ${await reforestation.getAddress()}`);
 
   const Governance = await ethers.getContractFactory("CeloHTGovernance");
-  const governance = await Governance.deploy(usdmAddress, governanceTreasury, FEES.vote, deployer.address);
+  const governance = await Governance.deploy(
+    usdmAddress,
+    governanceTreasury,
+    FEES.vote,
+    deployer.address,
+  );
   await governance.waitForDeployment();
   console.log(`CeloHTGovernance: ${await governance.getAddress()}`);
 
@@ -110,7 +135,9 @@ async function main() {
   try {
     gitCommit = execSync("git rev-parse HEAD").toString().trim();
   } catch {
-    console.warn("⚠️  Could not read git commit (not a git repo or git unavailable).");
+    console.warn(
+      "⚠️  Could not read git commit (not a git repo or git unavailable).",
+    );
   }
 
   const deploymentTx = registry.deploymentTransaction();
@@ -135,7 +162,9 @@ async function main() {
     education: await education.getAddress(),
     reforestation: await reforestation.getAddress(),
     governance: await governance.getAddress(),
-    deploymentBlock: deploymentTx ? (await deploymentTx.wait())?.blockNumber ?? null : null,
+    deploymentBlock: deploymentTx
+      ? ((await deploymentTx.wait())?.blockNumber ?? null)
+      : null,
     deploymentTimestamp: new Date().toISOString(),
     compilerVersion: "0.8.24",
     optimizerRuns: 200,
@@ -143,9 +172,9 @@ async function main() {
     verification: "NOT VERIFIED — run scripts/verifyContracts.ts",
   };
 
-  const outDir = path.join(__dirname, "..", "deployments");
+  const outDir = path.join(__dirname, "deployments");
   fs.mkdirSync(outDir, { recursive: true });
-  const outFile = path.join(outDir, `celo-${network.name === "celo" ? "mainnet" : network.name}.json`);
+  const outFile = path.join(outDir, `${network.name}.json`);
   fs.writeFileSync(outFile, JSON.stringify(manifest, null, 2));
   console.log(`\nDeployment manifest written to ${outFile}`);
 }

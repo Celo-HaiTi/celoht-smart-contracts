@@ -4,7 +4,12 @@ async function main() {
   const [signer] = await ethers.getSigners();
   const address = signer.address;
   const balance = await ethers.provider.getBalance(address);
-  const nativeSymbol = network.name === "celo" ? "CELO" : network.name === "celoSepolia" ? "CELO" : "ETH";
+  const nativeSymbol =
+    network.name === "celo"
+      ? "CELO"
+      : network.name === "celoSepolia"
+        ? "CELO"
+        : "ETH";
 
   console.log("=== Wallet balance check ===");
   console.log(`Network: ${network.name}`);
@@ -13,18 +18,22 @@ async function main() {
   console.log(`Balance: ${ethers.formatEther(balance)} ${nativeSymbol}`);
 
   const minRequired = ethers.parseEther("0.01");
-  console.log(`Recommended minimum for deploy: ${ethers.formatEther(minRequired)} ${nativeSymbol}`);
+  console.log(
+    `Recommended minimum for deploy: ${ethers.formatEther(minRequired)} ${nativeSymbol}`,
+  );
 
   if (balance < minRequired) {
     console.warn(
       `WARNING: balance is below the recommended minimum for deployment. ` +
-      `Fund this wallet before attempting a live deploy on ${network.name}.`
+        `Fund this wallet before attempting a live deploy on ${network.name}.`,
     );
     process.exitCode = 1;
     return;
   }
 
-  console.log("Wallet balance check passed: sufficient funds for a deployment attempt.");
+  console.log(
+    "Wallet balance check passed: sufficient funds for a deployment attempt.",
+  );
 }
 
 main().catch((error) => {

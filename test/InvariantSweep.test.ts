@@ -21,9 +21,14 @@ describe("CeloHTServicePayments — invariant sweep", () => {
       await usdm.getAddress(),
       treasury.address,
       FEES.registration,
-      admin.address
+      admin.address,
     );
-    await fundAndApprove(usdm, agentWallet, await registry.getAddress(), FEES.registration);
+    await fundAndApprove(
+      usdm,
+      agentWallet,
+      await registry.getAddress(),
+      FEES.registration,
+    );
     await registry.connect(agentWallet).registerAgent();
 
     const Payments = await ethers.getContractFactory("CeloHTServicePayments");
@@ -33,24 +38,40 @@ describe("CeloHTServicePayments — invariant sweep", () => {
       treasury.address,
       admin.address,
       FEES.p2p,
-      FEES.education
+      FEES.education,
     );
 
     return { admin, treasury, agentWallet, customer, usdm, payments };
   }
 
-  const priceSamples = [1n, 2n, 3n, 100n, 12345n, ethers.parseUnits("0.010", 18), ethers.parseUnits("1", 18)];
+  const priceSamples = [
+    1n,
+    2n,
+    3n,
+    100n,
+    12345n,
+    ethers.parseUnits("0.010", 18),
+    ethers.parseUnits("1", 18),
+  ];
   const bpsSamples = [0, 1, 4999, 5000, 5001, 8000, 9999, 10000];
 
   for (const bps of bpsSamples) {
     for (const priceRaw of priceSamples) {
       it(`splits exactly for bps=${bps}, price=${priceRaw.toString()}`, async () => {
-        const { admin, treasury, agentWallet, customer, usdm, payments } = await loadFixture(deployFixture);
+        const { admin, treasury, agentWallet, customer, usdm, payments } =
+          await loadFixture(deployFixture);
 
         await payments.connect(admin).setAgentShareBps(bps);
-        await payments.connect(admin).setServicePrice(ServiceType.P2P, priceRaw);
+        await payments
+          .connect(admin)
+          .setServicePrice(ServiceType.P2P, priceRaw);
         if (priceRaw > 0n) {
-          await fundAndApprove(usdm, customer, await payments.getAddress(), priceRaw);
+          await fundAndApprove(
+            usdm,
+            customer,
+            await payments.getAddress(),
+            priceRaw,
+          );
         }
 
         const treasuryBefore = await usdm.balanceOf(treasury.address);
@@ -58,8 +79,10 @@ describe("CeloHTServicePayments — invariant sweep", () => {
 
         await payments.connect(customer).payForService(ServiceType.P2P, 1n);
 
-        const agentShare = (await usdm.balanceOf(agentWallet.address)) - agentBefore;
-        const treasuryShare = (await usdm.balanceOf(treasury.address)) - treasuryBefore;
+        const agentShare =
+          (await usdm.balanceOf(agentWallet.address)) - agentBefore;
+        const treasuryShare =
+          (await usdm.balanceOf(treasury.address)) - treasuryBefore;
 
         // Core invariant: nothing created, nothing destroyed.
         expect(agentShare + treasuryShare).to.equal(priceRaw);

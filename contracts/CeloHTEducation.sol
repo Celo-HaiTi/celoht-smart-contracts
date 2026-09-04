@@ -22,8 +22,10 @@ import {ICeloHTEducation} from "./interfaces/ICeloHTEducation.sol";
 contract CeloHTEducation is ICeloHTEducation, AccessControl {
     using SafeERC20 for IERC20;
 
-    bytes32 public constant EDUCATION_ISSUER_ROLE = keccak256("EDUCATION_ISSUER_ROLE");
-    bytes32 public constant TREASURY_ADMIN_ROLE = keccak256("TREASURY_ADMIN_ROLE");
+    bytes32 public constant EDUCATION_ISSUER_ROLE =
+        keccak256("EDUCATION_ISSUER_ROLE");
+    bytes32 public constant TREASURY_ADMIN_ROLE =
+        keccak256("TREASURY_ADMIN_ROLE");
     bytes32 public constant FEE_ADMIN_ROLE = keccak256("FEE_ADMIN_ROLE");
 
     IERC20 public immutable usdm;
@@ -38,8 +40,17 @@ contract CeloHTEducation is ICeloHTEducation, AccessControl {
     ///      that have not yet been consumed by an issuance.
     mapping(address => uint256) public eligiblePaymentsRemaining;
 
-    constructor(address usdmToken, address initialTreasury, uint256 initialCertificateFee, address admin) {
-        if (usdmToken == address(0) || initialTreasury == address(0) || admin == address(0)) {
+    constructor(
+        address usdmToken,
+        address initialTreasury,
+        uint256 initialCertificateFee,
+        address admin
+    ) {
+        if (
+            usdmToken == address(0) ||
+            initialTreasury == address(0) ||
+            admin == address(0)
+        ) {
             revert ZeroAddress();
         }
         usdm = IERC20(usdmToken);
@@ -59,23 +70,28 @@ contract CeloHTEducation is ICeloHTEducation, AccessControl {
         if (recipient == address(0)) revert ZeroAddress();
 
         if (certificateFee > 0) {
-            usdm.safeTransferFrom(msg.sender, treasury, certificateFee);
+            _transferExact(msg.sender, treasury, certificateFee);
         }
 
         eligiblePaymentsRemaining[recipient] += 1;
 
-        emit CertificateFeePaid(msg.sender, recipient, certificateFee, uint64(block.timestamp));
+        emit CertificateFeePaid(
+            msg.sender,
+            recipient,
+            certificateFee,
+            uint64(block.timestamp)
+        );
     }
 
     /// @notice Issues a certificate to `recipient`, consuming one eligible
     ///         payment. Only callable by an authorized issuer.
-    function issueCertificate(address recipient, string calldata metadataURI)
-        external
-        onlyRole(EDUCATION_ISSUER_ROLE)
-        returns (uint256 certificateId)
-    {
+    function issueCertificate(
+        address recipient,
+        string calldata metadataURI
+    ) external onlyRole(EDUCATION_ISSUER_ROLE) returns (uint256 certificateId) {
         if (recipient == address(0)) revert ZeroAddress();
-        if (eligiblePaymentsRemaining[recipient] == 0) revert NoEligiblePayment(recipient);
+        if (eligiblePaymentsRemaining[recipient] == 0)
+            revert NoEligiblePayment(recipient);
 
         eligiblePaymentsRemaining[recipient] -= 1;
 
@@ -90,15 +106,21 @@ contract CeloHTEducation is ICeloHTEducation, AccessControl {
             revokedAt: 0
         });
 
-        emit CertificateIssued(certificateId, recipient, msg.sender, metadataURI);
+        emit CertificateIssued(
+            certificateId,
+            recipient,
+            msg.sender,
+            metadataURI
+        );
     }
 
-    function revokeCertificate(uint256 certificateId, string calldata reason)
-        external
-        onlyRole(EDUCATION_ISSUER_ROLE)
-    {
+    function revokeCertificate(
+        uint256 certificateId,
+        string calldata reason
+    ) external onlyRole(EDUCATION_ISSUER_ROLE) {
         Certificate storage cert = _certificates[certificateId];
-        if (cert.recipient == address(0)) revert CertificateNotFound(certificateId);
+        if (cert.recipient == address(0))
+            revert CertificateNotFound(certificateId);
         if (cert.revoked) revert AlreadyRevoked(certificateId);
 
         cert.revoked = true;
@@ -107,18 +129,36 @@ contract CeloHTEducation is ICeloHTEducation, AccessControl {
         emit CertificateRevoked(certificateId, msg.sender, reason);
     }
 
-    function setCertificateFee(uint256 newFee) external onlyRole(FEE_ADMIN_ROLE) {
+    function setCertificateFee(
+        uint256 newFee
+    ) external onlyRole(FEE_ADMIN_ROLE) {
         emit CertificateFeeUpdated(certificateFee, newFee);
         certificateFee = newFee;
     }
 
-    function setTreasury(address newTreasury) external onlyRole(TREASURY_ADMIN_ROLE) {
+    function setTreasury(
+        address newTreasury
+    ) external onlyRole(TREASURY_ADMIN_ROLE) {
         if (newTreasury == address(0)) revert ZeroAddress();
         emit TreasuryUpdated(treasury, newTreasury);
         treasury = newTreasury;
     }
 
-    function setIssuerAuthorized(address issuer, bool authorized) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function _transferExact(address from, address to, uint256 amount) private {
+        if (from == to) {
+            usdm.safeTransferFrom(from, to, amount);
+            return;
+        }
+        uint256 balanceBefore = usdm.balanceOf(to);
+        usdm.safeTransferFrom(from, to, amount);
+        uint256 received = usdm.balanceOf(to) - balanceBefore;
+        if (received != amount) revert IncorrectAmount(amount, received);
+    }
+
+    function setIssuerAuthorized(
+        address issuer,
+        bool authorized
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (authorized) {
             _grantRole(EDUCATION_ISSUER_ROLE, issuer);
         } else {
@@ -127,22 +167,31 @@ contract CeloHTEducation is ICeloHTEducation, AccessControl {
         emit IssuerAuthorizationChanged(issuer, authorized);
     }
 
-    function isValidCertificate(uint256 certificateId) external view returns (bool) {
+    function isValidCertificate(
+        uint256 certificateId
+    ) external view returns (bool) {
         Certificate memory cert = _certificates[certificateId];
         return cert.recipient != address(0) && !cert.revoked;
     }
 
-    function getCertificate(uint256 certificateId) external view returns (Certificate memory) {
+    function getCertificate(
+        uint256 certificateId
+    ) external view returns (Certificate memory) {
         Certificate memory cert = _certificates[certificateId];
-        if (cert.recipient == address(0)) revert CertificateNotFound(certificateId);
+        if (cert.recipient == address(0))
+            revert CertificateNotFound(certificateId);
         return cert;
     }
 
-    function eligiblePayments(address recipient) external view returns (uint256) {
+    function eligiblePayments(
+        address recipient
+    ) external view returns (uint256) {
         return eligiblePaymentsRemaining[recipient];
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(AccessControl) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }

@@ -2,7 +2,7 @@
 
 CeloHT is a Celo-native protocol ecosystem for agent coordination, service payments, education support, reforestation incentives, and transparent governance. The system is designed around USDm settlement, with CELO used strictly for gas and network operations.
 
-This repository contains the production-ready smart-contract stack and operational tooling for deploying and validating the protocol on supported Celo networks.
+This repository contains the testnet-ready smart-contract stack and operational tooling for deploying and validating the protocol on supported Celo networks. Mainnet still requires an independent security audit and operational approval.
 
 ## Project status
 

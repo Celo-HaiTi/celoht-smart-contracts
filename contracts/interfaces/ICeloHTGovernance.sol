@@ -40,11 +40,26 @@ interface ICeloHTGovernance {
         uint64 startTime,
         uint64 endTime
     );
-    event VoteCast(uint256 indexed proposalId, address indexed voter, VoteOption option);
-    event ProposalFinalized(uint256 indexed proposalId, uint256 yesVotes, uint256 noVotes, uint256 abstainVotes);
+    event VoteCast(
+        uint256 indexed proposalId,
+        address indexed voter,
+        VoteOption option
+    );
+    event ProposalFinalized(
+        uint256 indexed proposalId,
+        uint256 yesVotes,
+        uint256 noVotes,
+        uint256 abstainVotes
+    );
     event ParticipationFeeUpdated(uint256 oldFee, uint256 newFee);
-    event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
-    event ProposerAuthorizationChanged(address indexed proposer, bool authorized);
+    event TreasuryUpdated(
+        address indexed oldTreasury,
+        address indexed newTreasury
+    );
+    event ProposerAuthorizationChanged(
+        address indexed proposer,
+        bool authorized
+    );
 
     error WrongToken(address expected, address provided);
     error IncorrectAmount(uint256 expected, uint256 provided);
@@ -59,9 +74,12 @@ interface ICeloHTGovernance {
     error ZeroAddress();
     error NotAuthorizedProposer(address caller);
 
-    function createProposal(bytes32 contentHash, string calldata metadataURI, uint64 startTime, uint64 endTime)
-        external
-        returns (uint256 proposalId);
+    function createProposal(
+        bytes32 contentHash,
+        string calldata metadataURI,
+        uint64 startTime,
+        uint64 endTime
+    ) external returns (uint256 proposalId);
 
     function vote(uint256 proposalId, VoteOption option) external;
 
@@ -73,7 +91,12 @@ interface ICeloHTGovernance {
 
     function setProposerAuthorized(address proposer, bool authorized) external;
 
-    function hasVoted(uint256 proposalId, address voter) external view returns (bool);
+    function hasVoted(
+        uint256 proposalId,
+        address voter
+    ) external view returns (bool);
 
-    function getProposal(uint256 proposalId) external view returns (Proposal memory);
+    function getProposal(
+        uint256 proposalId
+    ) external view returns (Proposal memory);
 }

@@ -14,12 +14,22 @@ interface ICeloHTReforestation {
         uint64 timestamp;
     }
 
-    event DonationReceived(uint256 indexed donationId, address indexed donor, uint256 amount, uint64 timestamp);
-    event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
+    event DonationReceived(
+        uint256 indexed donationId,
+        address indexed donor,
+        uint256 amount,
+        uint64 timestamp
+    );
+    event TreasuryUpdated(
+        address indexed oldTreasury,
+        address indexed newTreasury
+    );
 
     error WrongToken(address expected, address provided);
+    error IncorrectAmount(uint256 expected, uint256 provided);
     error ZeroAmount();
     error ZeroAddress();
+    error DonationNotFound(uint256 donationId);
 
     function donate(uint256 amount) external returns (uint256 donationId);
 
@@ -31,5 +41,7 @@ interface ICeloHTReforestation {
 
     function donorTotal(address donor) external view returns (uint256);
 
-    function getDonation(uint256 donationId) external view returns (Donation memory);
+    function getDonation(
+        uint256 donationId
+    ) external view returns (Donation memory);
 }
