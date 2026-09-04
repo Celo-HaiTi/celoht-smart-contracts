@@ -2,23 +2,20 @@
 
 ## Honest status
 
-| Item | Status |
-|---|---|
-| Contracts written to professional Solidity practice | Implemented |
-| Test suite covering the invariants in section 18 of the spec | Implemented |
-| `npx hardhat compile` actually run in this delivery | **Not executed** — no network access in this sandbox |
-| `npx hardhat test` / coverage actually run | **Not executed** |
-| Slither / static analysis actually run | **Not executed** |
-| Independent third-party audit | **Not performed. Not claimed.** |
-| Testnet deployment | **Not performed** |
-| Mainnet deployment | **Not performed** |
+| Item                                                         | Status                          |
+| ------------------------------------------------------------ | ------------------------------- |
+| Contracts written to professional Solidity practice          | Implemented                     |
+| Test suite covering the invariants in section 18 of the spec | Implemented                     |
+| `npx hardhat compile` actually run in this delivery          | **Executed successfully**       |
+| `npx hardhat test` / coverage actually run                   | **Executed successfully**       |
+| Slither / static analysis actually run                       | **Not executed**                |
+| Independent third-party audit                                | **Not performed. Not claimed.** |
+| Testnet deployment                                           | **Not performed**               |
+| Mainnet deployment                                           | **Not performed**               |
 
-This is the single most important thing to understand about this delivery:
-the code was written to compile and pass against `hardhat-toolbox` +
-`@openzeppelin/contracts@^5`, following their current APIs from training
-knowledge, but **it has not been compiled or executed in this session**
-because this container has no network access to fetch `node_modules`. Run
-the quality gate yourself before trusting this code:
+The code has been compiled and tested locally against the installed
+`hardhat-toolbox` and `@openzeppelin/contracts@^5` dependencies. Run the
+quality gate again after any dependency update:
 
 ```bash
 npm install
@@ -45,7 +42,7 @@ Report back and this can be corrected quickly rather than papered over.
 - **SafeERC20**: every transfer uses `SafeERC20.safeTransferFrom`, so
   non-standard ERC-20s that don't return a bool don't silently "succeed".
 - **Access control**: OpenZeppelin `AccessControl` with named, minimal roles
-  per contract (see `docs/ARCHITECTURE.md`); no role is granted more
+  per contract (see `ARCHITECTURE.md`); no role is granted more
   authority than its function needs.
 - **Zero-address checks**: every constructor and every treasury/admin setter
   rejects the zero address with a custom error.
@@ -86,4 +83,4 @@ Report back and this can be corrected quickly rather than papered over.
 
 ## Threat model
 
-See `docs/THREAT_MODEL.md`.
+See [THREAT_MODEL.md](THREAT_MODEL.md).

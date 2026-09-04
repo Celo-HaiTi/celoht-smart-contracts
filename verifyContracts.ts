@@ -9,26 +9,36 @@ import * as path from "path";
  * success; otherwise reports "NOT VERIFIED" with the underlying error.
  * Never fabricates a verification result.
  */
-async function verifyOne(label: string, address: string, constructorArguments: unknown[]) {
+async function verifyOne(
+  label: string,
+  address: string,
+  constructorArguments: unknown[],
+) {
   try {
     await run("verify:verify", { address, constructorArguments });
     console.log(`✅ VERIFIED: ${label} (${address})`);
     return true;
-  } catch (err: any) {
-    if (err?.message?.toLowerCase().includes("already verified")) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (message.toLowerCase().includes("already verified")) {
       console.log(`✅ VERIFIED (already): ${label} (${address})`);
       return true;
     }
-    console.error(`❌ NOT VERIFIED: ${label} (${address}) — ${err?.message ?? err}`);
+    console.error(`❌ NOT VERIFIED: ${label} (${address}) — ${message}`);
     return false;
   }
 }
 
 async function main() {
-  const manifestFile = network.name === "celo" ? "celo-mainnet.json" : `celo-${network.name}.json`;
-  const manifestPath = path.join(__dirname, "..", "deployments", manifestFile);
+  const manifestPath = path.join(
+    __dirname,
+    "deployments",
+    `${network.name}.json`,
+  );
   if (!fs.existsSync(manifestPath)) {
-    throw new Error(`No deployment manifest found at ${manifestPath}. Run deployAll.ts first.`);
+    throw new Error(
+      `No deployment manifest found at ${manifestPath}. Run deployAll.ts first.`,
+    );
   }
   const m = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 
@@ -47,7 +57,7 @@ async function main() {
       m.generalTreasury,
       FEES.registration,
       m.deployer,
-    ])
+    ]),
   );
   results.push(
     await verifyOne("CeloHTServicePayments", m.servicePayments, [
@@ -57,16 +67,30 @@ async function main() {
       m.deployer,
       FEES.p2p,
       FEES.education,
-    ])
+    ]),
   );
   results.push(
-    await verifyOne("CeloHTEducation", m.education, [m.usdm, m.educationTreasury, FEES.certificate, m.deployer])
+    await verifyOne("CeloHTEducation", m.education, [
+      m.usdm,
+      m.educationTreasury,
+      FEES.certificate,
+      m.deployer,
+    ]),
   );
   results.push(
-    await verifyOne("CeloHTReforestation", m.reforestation, [m.usdm, m.reforestationTreasury, m.deployer])
+    await verifyOne("CeloHTReforestation", m.reforestation, [
+      m.usdm,
+      m.reforestationTreasury,
+      m.deployer,
+    ]),
   );
   results.push(
-    await verifyOne("CeloHTGovernance", m.governance, [m.usdm, m.governanceTreasury, FEES.vote, m.deployer])
+    await verifyOne("CeloHTGovernance", m.governance, [
+      m.usdm,
+      m.governanceTreasury,
+      FEES.vote,
+      m.deployer,
+    ]),
   );
 
   m.verification = results.every(Boolean) ? "VERIFIED" : "NOT VERIFIED";

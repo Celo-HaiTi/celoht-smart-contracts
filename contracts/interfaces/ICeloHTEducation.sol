@@ -17,12 +17,29 @@ interface ICeloHTEducation {
         uint64 revokedAt;
     }
 
-    event CertificateFeePaid(address indexed payer, address indexed recipient, uint256 amount, uint64 timestamp);
-    event CertificateIssued(uint256 indexed certificateId, address indexed recipient, address indexed issuer, string metadataURI);
-    event CertificateRevoked(uint256 indexed certificateId, address indexed revokedBy, string reason);
+    event CertificateFeePaid(
+        address indexed payer,
+        address indexed recipient,
+        uint256 amount,
+        uint64 timestamp
+    );
+    event CertificateIssued(
+        uint256 indexed certificateId,
+        address indexed recipient,
+        address indexed issuer,
+        string metadataURI
+    );
+    event CertificateRevoked(
+        uint256 indexed certificateId,
+        address indexed revokedBy,
+        string reason
+    );
     event IssuerAuthorizationChanged(address indexed issuer, bool authorized);
     event CertificateFeeUpdated(uint256 oldFee, uint256 newFee);
-    event TreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
+    event TreasuryUpdated(
+        address indexed oldTreasury,
+        address indexed newTreasury
+    );
 
     error WrongToken(address expected, address provided);
     error IncorrectAmount(uint256 expected, uint256 provided);
@@ -33,11 +50,15 @@ interface ICeloHTEducation {
 
     function payCertificateFee(address recipient) external;
 
-    function issueCertificate(address recipient, string calldata metadataURI)
-        external
-        returns (uint256 certificateId);
+    function issueCertificate(
+        address recipient,
+        string calldata metadataURI
+    ) external returns (uint256 certificateId);
 
-    function revokeCertificate(uint256 certificateId, string calldata reason) external;
+    function revokeCertificate(
+        uint256 certificateId,
+        string calldata reason
+    ) external;
 
     function setCertificateFee(uint256 newFee) external;
 
@@ -45,9 +66,15 @@ interface ICeloHTEducation {
 
     function setIssuerAuthorized(address issuer, bool authorized) external;
 
-    function isValidCertificate(uint256 certificateId) external view returns (bool);
+    function isValidCertificate(
+        uint256 certificateId
+    ) external view returns (bool);
 
-    function getCertificate(uint256 certificateId) external view returns (Certificate memory);
+    function getCertificate(
+        uint256 certificateId
+    ) external view returns (Certificate memory);
 
-    function eligiblePayments(address recipient) external view returns (uint256);
+    function eligiblePayments(
+        address recipient
+    ) external view returns (uint256);
 }

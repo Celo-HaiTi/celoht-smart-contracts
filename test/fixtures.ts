@@ -18,11 +18,20 @@ export async function deployMockWrongToken() {
   return Factory.deploy();
 }
 
+type MintableToken = {
+  mint(to: string, amount: bigint): Promise<unknown>;
+  connect(user: unknown): {
+    approve(spender: string, amount: bigint): Promise<unknown>;
+  };
+};
+
+type User = { address: string };
+
 export async function fundAndApprove(
-  token: any,
-  user: any,
+  token: MintableToken,
+  user: User,
   spender: string,
-  amount: bigint
+  amount: bigint,
 ) {
   await token.mint(user.address, amount);
   await token.connect(user).approve(spender, amount);

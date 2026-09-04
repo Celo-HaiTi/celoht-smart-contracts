@@ -7,7 +7,7 @@ import * as path from "path";
  * contract addresses across multiple files by hand (SKILL section 37).
  */
 function main() {
-  const deploymentsDir = path.join(__dirname, "..", "deployments");
+  const deploymentsDir = path.join(__dirname, "deployments");
   const outFile = path.join(deploymentsDir, "dapp-config.json");
 
   const files = fs
@@ -16,13 +16,17 @@ function main() {
 
   const config: Record<string, unknown> = {};
   for (const file of files) {
-    const network = file.replace(/^celo-/, "").replace(/\.json$/, "");
-    config[network] = JSON.parse(fs.readFileSync(path.join(deploymentsDir, file), "utf-8"));
+    const network = file.replace(/\.json$/, "");
+    config[network] = JSON.parse(
+      fs.readFileSync(path.join(deploymentsDir, file), "utf-8"),
+    );
   }
 
   fs.writeFileSync(outFile, JSON.stringify(config, null, 2));
   console.log(`DApp config exported to ${outFile}`);
-  console.log(`Networks included: ${Object.keys(config).join(", ") || "(none — no manifests found yet)"}`);
+  console.log(
+    `Networks included: ${Object.keys(config).join(", ") || "(none — no manifests found yet)"}`,
+  );
 }
 
 main();

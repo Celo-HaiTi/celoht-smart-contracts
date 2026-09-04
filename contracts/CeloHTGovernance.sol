@@ -27,9 +27,11 @@ import {ICeloHTGovernance} from "./interfaces/ICeloHTGovernance.sol";
 contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
     using SafeERC20 for IERC20;
 
-    bytes32 public constant GOVERNANCE_ADMIN_ROLE = keccak256("GOVERNANCE_ADMIN_ROLE");
+    bytes32 public constant GOVERNANCE_ADMIN_ROLE =
+        keccak256("GOVERNANCE_ADMIN_ROLE");
     bytes32 public constant PROPOSER_ROLE = keccak256("PROPOSER_ROLE");
-    bytes32 public constant TREASURY_ADMIN_ROLE = keccak256("TREASURY_ADMIN_ROLE");
+    bytes32 public constant TREASURY_ADMIN_ROLE =
+        keccak256("TREASURY_ADMIN_ROLE");
 
     IERC20 public immutable usdm;
 
@@ -40,8 +42,17 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
     mapping(uint256 => Proposal) private _proposals;
     mapping(uint256 => mapping(address => bool)) private _hasVoted;
 
-    constructor(address usdmToken, address initialTreasury, uint256 initialParticipationFee, address admin) {
-        if (usdmToken == address(0) || initialTreasury == address(0) || admin == address(0)) {
+    constructor(
+        address usdmToken,
+        address initialTreasury,
+        uint256 initialParticipationFee,
+        address admin
+    ) {
+        if (
+            usdmToken == address(0) ||
+            initialTreasury == address(0) ||
+            admin == address(0)
+        ) {
             revert ZeroAddress();
         }
         usdm = IERC20(usdmToken);
@@ -54,12 +65,14 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
         _grantRole(PROPOSER_ROLE, admin);
     }
 
-    function createProposal(bytes32 contentHash, string calldata metadataURI, uint64 startTime, uint64 endTime)
-        external
-        onlyRole(PROPOSER_ROLE)
-        returns (uint256 proposalId)
-    {
-        if (startTime >= endTime || endTime <= block.timestamp) revert InvalidWindow(startTime, endTime);
+    function createProposal(
+        bytes32 contentHash,
+        string calldata metadataURI,
+        uint64 startTime,
+        uint64 endTime
+    ) external onlyRole(PROPOSER_ROLE) returns (uint256 proposalId) {
+        if (startTime >= endTime || endTime <= block.timestamp)
+            revert InvalidWindow(startTime, endTime);
 
         proposalId = _nextProposalId++;
         _proposals[proposalId] = Proposal({
@@ -75,7 +88,14 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
             finalized: false
         });
 
-        emit ProposalCreated(proposalId, msg.sender, contentHash, metadataURI, startTime, endTime);
+        emit ProposalCreated(
+            proposalId,
+            msg.sender,
+            contentHash,
+            metadataURI,
+            startTime,
+            endTime
+        );
     }
 
     /// @notice Casts one vote for `proposalId`. Exactly one vote per wallet
@@ -84,10 +104,13 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
     ///         function does not accept a variable amount.
     function vote(uint256 proposalId, VoteOption option) external {
         Proposal storage proposal = _proposals[proposalId];
-        if (proposal.proposer == address(0)) revert ProposalNotFound(proposalId);
-        if (block.timestamp < proposal.startTime) revert VotingNotStarted(proposalId);
+        if (proposal.proposer == address(0))
+            revert ProposalNotFound(proposalId);
+        if (block.timestamp < proposal.startTime)
+            revert VotingNotStarted(proposalId);
         if (block.timestamp > proposal.endTime) revert VotingEnded(proposalId);
-        if (_hasVoted[proposalId][msg.sender]) revert AlreadyVoted(msg.sender, proposalId);
+        if (_hasVoted[proposalId][msg.sender])
+            revert AlreadyVoted(msg.sender, proposalId);
         if (option == VoteOption.NONE) revert InvalidVoteOption();
 
         _hasVoted[proposalId][msg.sender] = true;
@@ -101,7 +124,7 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
         }
 
         if (participationFee > 0) {
-            usdm.safeTransferFrom(msg.sender, treasury, participationFee);
+            _transferExact(msg.sender, treasury, participationFee);
         }
 
         emit VoteCast(proposalId, msg.sender, option);
@@ -109,27 +132,52 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
 
     function finalizeProposal(uint256 proposalId) external {
         Proposal storage proposal = _proposals[proposalId];
-        if (proposal.proposer == address(0)) revert ProposalNotFound(proposalId);
-        if (block.timestamp <= proposal.endTime) revert VotingNotEnded(proposalId);
+        if (proposal.proposer == address(0))
+            revert ProposalNotFound(proposalId);
+        if (block.timestamp <= proposal.endTime)
+            revert VotingNotEnded(proposalId);
         if (proposal.finalized) revert AlreadyFinalized(proposalId);
 
         proposal.finalized = true;
 
-        emit ProposalFinalized(proposalId, proposal.yesVotes, proposal.noVotes, proposal.abstainVotes);
+        emit ProposalFinalized(
+            proposalId,
+            proposal.yesVotes,
+            proposal.noVotes,
+            proposal.abstainVotes
+        );
     }
 
-    function setParticipationFee(uint256 newFee) external onlyRole(GOVERNANCE_ADMIN_ROLE) {
+    function setParticipationFee(
+        uint256 newFee
+    ) external onlyRole(GOVERNANCE_ADMIN_ROLE) {
         emit ParticipationFeeUpdated(participationFee, newFee);
         participationFee = newFee;
     }
 
-    function setTreasury(address newTreasury) external onlyRole(TREASURY_ADMIN_ROLE) {
+    function setTreasury(
+        address newTreasury
+    ) external onlyRole(TREASURY_ADMIN_ROLE) {
         if (newTreasury == address(0)) revert ZeroAddress();
         emit TreasuryUpdated(treasury, newTreasury);
         treasury = newTreasury;
     }
 
-    function setProposerAuthorized(address proposer, bool authorized) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function _transferExact(address from, address to, uint256 amount) private {
+        if (from == to) {
+            usdm.safeTransferFrom(from, to, amount);
+            return;
+        }
+        uint256 balanceBefore = usdm.balanceOf(to);
+        usdm.safeTransferFrom(from, to, amount);
+        uint256 received = usdm.balanceOf(to) - balanceBefore;
+        if (received != amount) revert IncorrectAmount(amount, received);
+    }
+
+    function setProposerAuthorized(
+        address proposer,
+        bool authorized
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
         if (authorized) {
             _grantRole(PROPOSER_ROLE, proposer);
         } else {
@@ -138,17 +186,25 @@ contract CeloHTGovernance is ICeloHTGovernance, AccessControl {
         emit ProposerAuthorizationChanged(proposer, authorized);
     }
 
-    function hasVoted(uint256 proposalId, address voter) external view returns (bool) {
+    function hasVoted(
+        uint256 proposalId,
+        address voter
+    ) external view returns (bool) {
         return _hasVoted[proposalId][voter];
     }
 
-    function getProposal(uint256 proposalId) external view returns (Proposal memory) {
+    function getProposal(
+        uint256 proposalId
+    ) external view returns (Proposal memory) {
         Proposal memory proposal = _proposals[proposalId];
-        if (proposal.proposer == address(0)) revert ProposalNotFound(proposalId);
+        if (proposal.proposer == address(0))
+            revert ProposalNotFound(proposalId);
         return proposal;
     }
 
-    function supportsInterface(bytes4 interfaceId) public view override(AccessControl) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
