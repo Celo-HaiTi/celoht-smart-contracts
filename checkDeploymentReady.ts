@@ -5,11 +5,7 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   const balance = await ethers.provider.getBalance(deployer.address);
   const cfg = loadDeploymentConfig(network.name);
-  const expectedChainIds: Record<string, bigint> = {
-    celoSepolia: 11142220n,
-    alfajores: 44787n,
-    celo: 42220n,
-  };
+  const expectedChainId = 11142220n;
 
   console.log(`Network: ${network.name}`);
   console.log(`Deployer: ${deployer.address}`);
@@ -17,27 +13,22 @@ async function main() {
   console.log(`USDm: ${cfg.usdm}`);
   console.log(`Treasury: ${cfg.generalTreasury}`);
 
-  if (
-    network.name !== "celoSepolia" &&
-    network.name !== "alfajores" &&
-    network.name !== "celo"
-  ) {
-    console.warn(
-      "Local or non-production network detected; deployment is not live-network ready.",
-    );
-    return;
+  if (network.name !== "celoSepolia") {
+    throw new Error("Deployment readiness requires the celoSepolia network.");
   }
 
   const actualChainId = (await ethers.provider.getNetwork()).chainId;
-  if (actualChainId !== expectedChainIds[network.name]) {
+  if (actualChainId !== expectedChainId) {
     throw new Error(
-      `Wrong chain ID for ${network.name}: expected ${expectedChainIds[network.name]}, got ${actualChainId}.`,
+      `Wrong chain ID: expected ${expectedChainId}, got ${actualChainId}.`,
     );
   }
 
-  if (balance === 0n) {
+  const minimumBalance = ethers.parseEther("0.01");
+  if (balance < minimumBalance) {
     throw new Error(
-      "Deployer wallet has zero CELO balance on the target network. Fund the wallet before deployment.",
+      `Insufficient deployer CELO balance: ${ethers.formatEther(balance)} CELO. ` +
+        `At least ${ethers.formatEther(minimumBalance)} CELO is required.`,
     );
   }
 

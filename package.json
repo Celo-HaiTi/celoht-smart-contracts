@@ -18,10 +18,8 @@
     "check:wallet": "hardhat run checkWalletBalance.ts --network celoSepolia",
     "deploy:testnet": "hardhat run deployAll.ts --network celoSepolia",
     "deploy:sepolia": "hardhat run deployAll.ts --network celoSepolia",
-    "deploy:mainnet": "hardhat run deployAll.ts --network celo",
     "verify:testnet": "hardhat run verifyContracts.ts --network celoSepolia",
     "verify:sepolia": "hardhat run verifyContracts.ts --network celoSepolia",
-    "verify:mainnet": "hardhat run verifyContracts.ts --network celo",
     "export:deployment": "hardhat run exportDeployment.ts"
   },
   "devDependencies": {

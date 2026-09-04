@@ -9,6 +9,10 @@ import * as path from "path";
  * mismatches for a human to resolve.
  */
 async function main() {
+  if (network.name !== "celoSepolia") {
+    throw new Error("Contract configuration requires the celoSepolia network.");
+  }
+
   const manifestPath = path.join(
     __dirname,
     "deployments",

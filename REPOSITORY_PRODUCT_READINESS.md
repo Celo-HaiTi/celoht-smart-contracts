@@ -32,7 +32,7 @@ This repository implements the CeloHT smart-contract layer for agent registratio
 
 - Uses USDm as the operational stable-value asset.
 - Treasury configuration is centralized in `deployConfig.ts`.
-- Network config targets Celo mainnet and Celo Sepolia, while preserving the deprecated Alfajores network as a legacy entry for compatibility.
+- Network config targets Celo Sepolia only, with chain ID `11142220`.
 
 ## Changes Made
 
@@ -61,8 +61,7 @@ This repository implements the CeloHT smart-contract layer for agent registratio
 ## Network Status
 
 - Celo Sepolia chain ID: 11142220
-- Celo Mainnet chain ID: 42220
-- Alfajores remains a legacy/deprecated network entry and is not the canonical current CeloHT testnet.
+- The repository does not configure Celo Mainnet or any legacy testnet.
 - No real deployment occurred in this session; real on-chain deployment remains blocked behind a verified environment and explicit deployment approval.
 
 ## USDm Status
@@ -96,12 +95,12 @@ This repository implements the CeloHT smart-contract layer for agent registratio
 
 - The contracts were reviewed for role gating, zero-address validation, token-specific acceptance, and fee-accounting logic.
 - The repository has not been audited by an external security firm, and no real-production deployment was performed.
-- Security status here is: code review complete for the current smart-contract scope; independent audit still required before production mainnet deployment.
+- Security status here is: code review complete for the current smart-contract scope; independent audit remains recommended before production use.
 
 ## Tests
 
 - Command executed: `npx hardhat compile && npx hardhat test`
-- Result: 89 passing (2s)
+- Result: 93 passing (5s)
 
 ## Build
 
@@ -114,9 +113,9 @@ This repository implements the CeloHT smart-contract layer for agent registratio
 
 ## Remaining External Dependencies
 
-- Real USDm addresses for each network must be independently verified before production use.
+- The Celo Sepolia USDm address must be independently verified before deployment.
 - Real deployer key and RPC configuration are required for any live deployment.
-- Any mainnet deployment must be explicitly approved and gated by the deploy script rules.
+- A human must manually dispatch the GitHub Actions deployment after reviewing the readiness checks.
 
 ## Remaining Blockers
 
