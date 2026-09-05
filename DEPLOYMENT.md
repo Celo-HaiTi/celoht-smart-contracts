@@ -4,6 +4,7 @@ CeloHT targets Celo Sepolia only.
 
 - Chain ID: `11142220`
 - Native currency: `CELO`
+- Official RPC: `https://forno.celo-sepolia.celo-testnet.org`
 - Explorer: https://celo-sepolia.blockscout.com
 - RPC secret: `SEPOLIA_RPC_URL`
 - Deployer secret: `PRIVATE_KEY`
@@ -47,7 +48,8 @@ npm run deploy:sepolia
 
 It refuses every network except `celoSepolia` and refuses any chain other than
 `11142220`. It writes `deployments/celoSepolia.json` only after successful
-transactions and confirmation.
+transactions and confirmation, and refuses to overwrite an existing manifest.
+Review an existing deployment before starting a fresh deployment.
 
 ## Verification
 

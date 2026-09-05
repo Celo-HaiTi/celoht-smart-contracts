@@ -98,6 +98,9 @@ async function main() {
   );
 
   m.verification = results.every(Boolean) ? "VERIFIED" : "NOT VERIFIED";
+  if (!results.every(Boolean)) {
+    process.exitCode = 1;
+  }
   fs.writeFileSync(manifestPath, JSON.stringify(m, null, 2));
   console.log(`\nManifest verification field updated to: ${m.verification}`);
 }
