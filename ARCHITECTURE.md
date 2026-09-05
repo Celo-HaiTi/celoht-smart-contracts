@@ -5,8 +5,10 @@
 Every claim in this document set uses one of these words deliberately:
 **Implemented** · **Tested** · **Deployed** · **Verified** · **Audited** · **Pending**
 
-As of this delivery: contracts are **Implemented** and **Tested**. Nothing is **Deployed**,
-**Verified**, or **Audited**.
+As of 2026-09-05: contracts are **Implemented**, **Tested**, **Deployed**, and
+**Verified** on Celo Sepolia. No independent third-party audit has been
+performed, so the repository is not claimed to be **Audited** or **Mainnet
+Ready**.
 
 ## Contracts
 
@@ -46,8 +48,13 @@ as a service payment or converted from USDm pricing. Every contract holds an
 `immutable` reference to the USDm token address set at construction — there is
 no code path that accepts an arbitrary ERC-20.
 
-USDm addresses (verified via CeloScan on 2026-08-30 — see `.env.example` for
-full source notes):
+The current Celo Sepolia deployment uses USDm at
+`0xdE9e4C3ce781b4bA68120d6261cbad65ce0aB00b`. Its deployment and the five
+CeloHT contract addresses are recorded in
+[`deployments/celoSepolia.json`](deployments/celoSepolia.json).
+
+Other network addresses (verified via CeloScan on 2026-08-30 — see
+`.env.example` for full source notes):
 
 - Mainnet: `0x765DE816845861e75A25fCA122bb6898B8B1282a` (the same proxy
   contract formerly labeled cUSD, rebranded "Mento Dollar (USDm)" by Mento).
@@ -88,16 +95,14 @@ recorded in the deployment manifest through the single centralized
 
 ## Configuration
 
-`config/deployConfig.ts` is the single source of truth for every address
+`deployConfig.ts` is the single source of truth for every address
 `deployAll.ts`, `configureContracts.ts`, and `verifyContracts.ts` use. No
 script reads `process.env` directly for an address and no address literal
 is duplicated across files. `loadDeploymentConfig(networkName)`:
 
-- requires `USDM_ADDRESS_CELO` / `USDM_ADDRESS_ALFAJORES` depending on
-  network (per-network, since the two are genuinely different contracts on
-  different chains — collapsing them into one variable would be incorrect);
-- requires all four `*_TREASURY` variables for any real network (`celo` or
-  `celoSepolia`) and validates each is a well-formed, non-zero address;
+- requires `USDM_ADDRESS_CELO_SEPOLIA` for the supported real network;
+- requires all four `*_TREASURY` variables for Celo Sepolia and validates each
+  is a well-formed, non-zero address;
 - throws a clear, explicit error and refuses to proceed if anything is
   missing or malformed — it never substitutes a different address.
 

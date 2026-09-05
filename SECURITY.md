@@ -2,20 +2,21 @@
 
 ## Honest status
 
-| Item                                                         | Status                          |
-| ------------------------------------------------------------ | ------------------------------- |
-| Contracts written to professional Solidity practice          | Implemented                     |
-| Test suite covering the invariants in section 18 of the spec | Implemented                     |
-| `npx hardhat compile` actually run in this delivery          | **Executed successfully**       |
-| `npx hardhat test` / coverage actually run                   | **Executed successfully**       |
-| Randomized property test                                     | **Executed successfully**       |
-| Foundry fuzz test                                            | **Executed successfully**       |
-| Echidna property campaign                                    | **Executed successfully**       |
-| CI quality gates                                             | **Configured**                  |
-| Slither / static analysis actually run                       | **Not executed**                |
-| Independent third-party audit                                | **Not performed. Not claimed.** |
-| Testnet deployment                                           | **Not performed**               |
-| Mainnet deployment                                           | **Not performed**               |
+| Item                                                         | Status                                              |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| Contracts written to professional Solidity practice          | Implemented                                         |
+| Test suite covering the invariants in section 18 of the spec | Implemented                                         |
+| `npx hardhat compile` actually run in this delivery          | **Executed successfully**                           |
+| `npx hardhat test` / coverage actually run                   | **Executed successfully**                           |
+| Randomized property test                                     | **Executed successfully**                           |
+| Foundry fuzz test                                            | **Executed successfully**                           |
+| Echidna property campaign                                    | **Executed successfully**                           |
+| CI quality gates                                             | **Configured**                                      |
+| Slither / static analysis actually run                       | **Not executed**                                    |
+| Independent third-party audit                                | **Not performed. Not claimed.**                     |
+| Testnet deployment                                           | **Deployed on Celo Sepolia; manifest recorded**     |
+| Mainnet deployment                                           | **Not performed**                                   |
+| Celo Sepolia source verification                             | **Verified on Blockscout; see deployment manifest** |
 
 The code has been compiled and tested locally against the installed
 `hardhat-toolbox` and `@openzeppelin/contracts@^5` dependencies. Run the
@@ -80,10 +81,36 @@ Report back and this can be corrected quickly rather than papered over.
   `test/echidna/SplitInvariant.sol`. These campaigns cover the arithmetic
   invariant; they do not replace a full stateful protocol fuzz suite or an
   independent audit.
-- **Slither / dependency audit**: requires `pip`/`slither-analyzer` and
-  `npm audit` against a real `node_modules`, neither available here.
+- **Slither**: not executed in this repository validation. Run it in CI or an
+  audit environment before mainnet.
+- **Dependency audit**: `npm audit --omit=dev --audit-level=high` reported no
+  known production dependency vulnerabilities on 2026-09-05.
 - **Independent audit**: out of scope for an AI coding session by
   definition; a real audit requires an independent human security firm.
+
+## Mainnet blockers and accepted risks
+
+- **HIGH operational risk: initial role custody is an EOA.** Each deployed
+  contract initially grants `DEFAULT_ADMIN_ROLE` and specialized roles to the
+  deployment admin. A compromised admin can change treasury destinations,
+  fees, agent status, issuer authorization, or proposer authorization. This
+  is not an unauthorized contract call; it is the intended privileged model,
+  but it is unacceptable as sole mainnet custody. Transfer the roles to the
+  approved multisig and verify the role events before mainnet. No new address
+  is invented here.
+- **MEDIUM token-assumption risk: USDm is immutable.** This prevents token
+  substitution after deployment and is a deliberate integrity control, but a
+  wrong or upgraded token at deployment cannot be repaired without a new
+  deployment. The manifest and readiness check must validate the chain, code,
+  symbol, and decimals before any future deployment.
+- **LOW recoverability risk: there is no arbitrary token recovery function.**
+  Tokens sent directly to a contract outside a protocol flow cannot be
+  recovered. This avoids an unrestricted withdrawal backdoor and is accepted
+  by the current architecture; operators must use the documented payment
+  paths.
+
+No CRITICAL or HIGH code-level exploit was identified in the reviewed
+contracts. The EOA custody item remains a HIGH mainnet operational blocker.
 
 ## Threat model
 
