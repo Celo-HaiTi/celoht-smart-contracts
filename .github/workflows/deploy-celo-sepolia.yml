@@ -12,12 +12,12 @@ jobs:
     environment: celo-sepolia
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20.x
+          node-version: 24.x
           cache: npm
 
       - name: Install dependencies
@@ -32,6 +32,7 @@ jobs:
           EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}
           REFORESTATION_TREASURY: ${{ secrets.REFORESTATION_TREASURY }}
           GOVERNANCE_TREASURY: ${{ secrets.GOVERNANCE_TREASURY }}
+          BLOCKSCOUT_API_KEY: ${{ secrets.BLOCKSCOUT_API_KEY }}
         run: |
           for secret_name in \
             SEPOLIA_RPC_URL \
@@ -40,7 +41,8 @@ jobs:
             GENERAL_TREASURY \
             EDUCATION_TREASURY \
             REFORESTATION_TREASURY \
-            GOVERNANCE_TREASURY; do
+            GOVERNANCE_TREASURY \
+            BLOCKSCOUT_API_KEY; do
             if [ -z "${!secret_name:-}" ]; then
               echo "Missing required deployment secret: ${secret_name}" >&2
               exit 1
@@ -72,6 +74,18 @@ jobs:
           REFORESTATION_TREASURY: ${{ secrets.REFORESTATION_TREASURY }}
           GOVERNANCE_TREASURY: ${{ secrets.GOVERNANCE_TREASURY }}
         run: npm run deploy:sepolia
+
+      - name: Verify deployed contracts on Celo Sepolia Blockscout
+        env:
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          USDM_ADDRESS_CELO_SEPOLIA: ${{ secrets.USDM_ADDRESS_CELO_SEPOLIA }}
+          GENERAL_TREASURY: ${{ secrets.GENERAL_TREASURY }}
+          EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}
+          REFORESTATION_TREASURY: ${{ secrets.REFORESTATION_TREASURY }}
+          GOVERNANCE_TREASURY: ${{ secrets.GOVERNANCE_TREASURY }}
+          BLOCKSCOUT_API_KEY: ${{ secrets.BLOCKSCOUT_API_KEY }}
+        run: npm run verify:sepolia
 
       - name: Upload deployment artifacts
         if: always()
