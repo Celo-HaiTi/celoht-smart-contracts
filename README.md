@@ -6,13 +6,15 @@ This repository contains the testnet-ready smart-contract stack and operational 
 
 ## Project status
 
-Verified in the current repository state as of 2026-09-01:
+Repository state as of 2026-09-05:
 
 - Hardhat compilation succeeds
-- Test suite passes: 89 tests passing
-- Repository is committed and pushed to the configured GitHub remote
-- Real deployment is prepared for Celo Sepolia
-- Live deployment remains gated on funded deployer wallet and explicit human approval
+- Test suite passes: 105 tests passing
+- Production dependency audit reports no known vulnerabilities
+- Celo Sepolia deployment is recorded in `deployments/celoSepolia.json`
+- The five deployed contracts are verified on Celo Sepolia Blockscout
+- No independent third-party audit is claimed
+- Mainnet deployment is not claimed or enabled
 
 ## Core protocol principles
 
@@ -42,12 +44,13 @@ The protocol is organized around five smart-contract domains:
 
 The repository is configured for Celo-based deployments with Celo Sepolia as the canonical testnet path.
 
-Current production-ready assumptions:
+Current testnet deployment status:
 
-- Sepolia is the active live testnet target in this repo
-- USDm address for Celo Sepolia is set to a verified public contract address
-- Deployment validation scripts enforce address correctness and environment checks
-- A deployer wallet must have sufficient CELO before any real deployment is attempted
+- Network: Celo Sepolia, chain ID `11142220`
+- USDm: `0xdE9e4C3ce781b4bA68120d6261cbad65ce0aB00b`
+- Treasury Safe: `0xd856e0599cc49C9cef6C358d2c2f064112A6b384`
+- Contract addresses, deployment blocks, transaction hashes, and verification status are in the deployment manifest
+- Deployment validation scripts enforce address correctness and environment checks for future manual deployments
 
 ## Deployment readiness
 
@@ -98,11 +101,15 @@ npm run check:wallet
 npx hardhat run checkDeploymentReady.ts --network celoSepolia
 ```
 
-5. Deploy the full protocol suite:
+5. Deploy the full protocol suite only when a new deployment is explicitly approved:
 
 ```bash
 npx hardhat run deployAll.ts --network celoSepolia
 ```
+
+The existing Celo Sepolia deployment must not be redeployed casually. The
+deployment script refuses to overwrite an existing manifest, but it cannot
+prevent a user from intentionally deploying to a fresh account or network.
 
 ## Repository structure
 
@@ -117,6 +124,8 @@ npx hardhat run deployAll.ts --network celoSepolia
 ├── deployConfig.ts              # Centralized config validation for real networks
 ├── hardhat.config.ts            # Hardhat network and verification config
 ├── verifyContracts.ts           # Contract verification flow
+├── deployments/celoSepolia.json # Traceable existing Sepolia deployment
+├── deployments/dapp-config.json # DApp-consumable deployment export
 ├── package.json                 # Scripts and dependencies
 ├── README.md                    # Repository documentation
 ├── LICENSE                      # Apache-2.0 license
@@ -140,7 +149,11 @@ After deployment, verification should be performed using the project verificatio
 
 ## Contribution
 
-This repository is intended for controlled protocol deployment and audited operational workflows. Contributions should be reviewed carefully, with emphasis on security, correctness, and deployment safety.
+This repository is intended for controlled protocol deployment and security
+review workflows. `DEPLOYED` and `VERIFIED` describe the current Celo Sepolia
+state; they do not mean `AUDITED` or `MAINNET READY`. Contributions should be
+reviewed carefully, with emphasis on security, correctness, and deployment
+safety.
 
 ## License
 

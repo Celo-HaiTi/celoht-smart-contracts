@@ -22,6 +22,20 @@ Configure these secrets before manually dispatching
 - `REFORESTATION_TREASURY`
 - `GOVERNANCE_TREASURY`
 
+## Existing Deployment
+
+The current Celo Sepolia deployment is already deployed and verified. Do not
+redeploy it as part of routine validation. The complete public record is in
+[`deployments/celoSepolia.json`](deployments/celoSepolia.json).
+
+| Contract              | Address                                      |
+| --------------------- | -------------------------------------------- |
+| CeloHTAgentRegistry   | `0x7C5bF20191f6b467aAcd2DD7693110cc4c17Cc2e` |
+| CeloHTServicePayments | `0xe91b8A6302FCf5a64A84c671C61B0F1DdA5F0ad2` |
+| CeloHTEducation       | `0x7422F20F025aCaad86c4de5E6Fa0F3a7B55ac09a` |
+| CeloHTReforestation   | `0xc1eEd81Aa989D818897CCffc755dC2a9B37F9e2A` |
+| CeloHTGovernance      | `0x7D384851FAbB912287206556479Dd30c740CAdA5` |
+
 The RPC URL and private key are never committed or printed. The workflow first
 compiles the contracts and runs `check:deployment`. That check confirms RPC
 connectivity, chain ID, deployer address detection, deployer CELO balance,
@@ -61,6 +75,9 @@ npm run verify:sepolia
 
 Verification is configured for the Celo Sepolia Blockscout explorer. Review the
 manifest and explorer results manually before integrating contract addresses.
+If `BLOCKSCOUT_API_KEY` is unavailable, the script reports `SKIPPED` and
+preserves an existing `VERIFIED` status; it never fabricates or downgrades a
+verification result.
 
 ## Manual Steps Before Deployment
 

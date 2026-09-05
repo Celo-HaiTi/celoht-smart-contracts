@@ -13,7 +13,14 @@ async function verifyOne(
   label: string,
   address: string,
   constructorArguments: unknown[],
-) {
+): Promise<boolean | null> {
+  if (!process.env.BLOCKSCOUT_API_KEY?.trim()) {
+    console.warn(
+      `⏭️  SKIPPED: ${label} (${address}) — BLOCKSCOUT_API_KEY is not configured.`,
+    );
+    return null;
+  }
+
   try {
     await run("verify:verify", { address, constructorArguments });
     console.log(`✅ VERIFIED: ${label} (${address})`);
@@ -54,7 +61,7 @@ async function main() {
     vote: 10000000000000000n,
   };
 
-  const results: boolean[] = [];
+  const results: Array<boolean | null> = [];
   results.push(
     await verifyOne("CeloHTAgentRegistry", m.agentRegistry, [
       m.usdm,
@@ -97,8 +104,13 @@ async function main() {
     ]),
   );
 
-  m.verification = results.every(Boolean) ? "VERIFIED" : "NOT VERIFIED";
-  if (!results.every(Boolean)) {
+  const hasFailure = results.some((result) => result === false);
+  const hasAttempt = results.some((result) => result !== null);
+  if (!hasFailure && hasAttempt) {
+    m.verification = "VERIFIED";
+  }
+  if (hasFailure) {
+    m.verification = "NOT VERIFIED";
     process.exitCode = 1;
   }
   fs.writeFileSync(manifestPath, JSON.stringify(m, null, 2));
