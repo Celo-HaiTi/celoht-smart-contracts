@@ -88,9 +88,8 @@ jobs:
         run: npm run verify:sepolia
 
       - name: Upload deployment artifacts
-        if: always()
+        if: always() && hashFiles('deployments/celoSepolia.json') != ''
         uses: actions/upload-artifact@v4
         with:
           name: celo-sepolia-deployment
           path: deployments/celoSepolia.json
-          if-no-files-found: warn
