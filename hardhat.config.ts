@@ -2,8 +2,12 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "dotenv/config";
 
+export const CELO_SEPOLIA_CHAIN_ID = 11142220;
+export const CELO_SEPOLIA_RPC_URL =
+  "https://forno.celo-sepolia.celo-testnet.org";
+
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
-const sepoliaRpcUrl = process.env.SEPOLIA_RPC_URL;
+const sepoliaRpcUrl = process.env.SEPOLIA_RPC_URL || CELO_SEPOLIA_RPC_URL;
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -21,8 +25,8 @@ const config: HardhatUserConfig = {
       chainId: 31337,
     },
     celoSepolia: {
-      url: sepoliaRpcUrl || "",
-      chainId: 11142220,
+      url: sepoliaRpcUrl,
+      chainId: CELO_SEPOLIA_CHAIN_ID,
       accounts,
     },
   },
@@ -33,7 +37,7 @@ const config: HardhatUserConfig = {
     customChains: [
       {
         network: "celoSepolia",
-        chainId: 11142220,
+        chainId: CELO_SEPOLIA_CHAIN_ID,
         urls: {
           apiURL: "https://celo-sepolia.blockscout.com/api",
           browserURL: "https://celo-sepolia.blockscout.com",

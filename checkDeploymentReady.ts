@@ -1,21 +1,34 @@
 import { ethers, network } from "hardhat";
-import { loadDeploymentConfig } from "./deployConfig";
+import { validateDeploymentEnvironment } from "./deployConfig";
 
 async function main() {
-  const [deployer] = await ethers.getSigners();
-  const balance = await ethers.provider.getBalance(deployer.address);
-  const cfg = loadDeploymentConfig(network.name);
-  const expectedChainId = 11142220n;
-
-  console.log(`Network: ${network.name}`);
-  console.log(`Deployer: ${deployer.address}`);
-  console.log(`Balance: ${ethers.formatEther(balance)} CELO`);
-  console.log(`USDm: ${cfg.usdm}`);
-  console.log(`Treasury: ${cfg.generalTreasury}`);
+  const cfg = validateDeploymentEnvironment();
 
   if (network.name !== "celoSepolia") {
     throw new Error("Deployment readiness requires the celoSepolia network.");
   }
+
+  const expectedChainId = 11142220n;
+  const configuredChainId = network.config.chainId;
+  if (configuredChainId !== Number(expectedChainId)) {
+    throw new Error(
+      `Wrong configured chain ID: expected ${expectedChainId}, got ${configuredChainId ?? "unset"}.`,
+    );
+  }
+
+  const [deployer] = await ethers.getSigners();
+  const balance = await ethers.provider.getBalance(deployer.address);
+
+  console.log(`Network: ${network.name}`);
+  console.log(`Balance: ${ethers.formatEther(balance)} CELO`);
+
+  console.log("✓ SEPOLIA_RPC_URL configured");
+  console.log("✓ PRIVATE_KEY configured");
+  console.log("✓ USDM_ADDRESS_CELO_SEPOLIA configured");
+  console.log("✓ GENERAL_TREASURY configured");
+  console.log("✓ EDUCATION_TREASURY configured");
+  console.log("✓ REFORESTATION_TREASURY configured");
+  console.log("✓ GOVERNANCE_TREASURY configured");
 
   const actualChainId = (await ethers.provider.getNetwork()).chainId;
   if (actualChainId !== expectedChainId) {
@@ -39,15 +52,13 @@ async function main() {
     !cfg.reforestationTreasury ||
     !cfg.governanceTreasury
   ) {
-    throw new Error(
-      "One or more deployment addresses are missing. Fill in .env and rerun the check.",
-    );
+    throw new Error("Deployment addresses must be configured.");
   }
 
   const tokenCode = await ethers.provider.getCode(cfg.usdm);
   if (tokenCode === "0x") {
     throw new Error(
-      `USDm address ${cfg.usdm} has no contract bytecode on ${network.name}.`,
+      `Configured USDm address has no contract bytecode on ${network.name}.`,
     );
   }
 
@@ -65,7 +76,7 @@ async function main() {
   ]);
   if (symbol !== "USDm" || decimals !== 18n) {
     throw new Error(
-      `Unexpected USDm metadata on ${network.name}: symbol=${symbol}, decimals=${decimals}.`,
+      `Unexpected USDm metadata on ${network.name}: symbol or decimals do not match the protocol.`,
     );
   }
 

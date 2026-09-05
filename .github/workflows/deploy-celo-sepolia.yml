@@ -23,6 +23,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate deployment secrets are configured
+        env:
+          SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          USDM_ADDRESS_CELO_SEPOLIA: ${{ secrets.USDM_ADDRESS_CELO_SEPOLIA }}
+          GENERAL_TREASURY: ${{ secrets.GENERAL_TREASURY }}
+          EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}
+          REFORESTATION_TREASURY: ${{ secrets.REFORESTATION_TREASURY }}
+          GOVERNANCE_TREASURY: ${{ secrets.GOVERNANCE_TREASURY }}
+        run: |
+          for secret_name in \
+            SEPOLIA_RPC_URL \
+            PRIVATE_KEY \
+            USDM_ADDRESS_CELO_SEPOLIA \
+            GENERAL_TREASURY \
+            EDUCATION_TREASURY \
+            REFORESTATION_TREASURY \
+            GOVERNANCE_TREASURY; do
+            if [ -z "${!secret_name:-}" ]; then
+              echo "Missing required deployment secret: ${secret_name}" >&2
+              exit 1
+            fi
+            echo "✓ ${secret_name} configured"
+          done
+
       - name: Compile
         run: npm run compile
 

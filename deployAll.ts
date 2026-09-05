@@ -2,7 +2,7 @@ import { ethers, network } from "hardhat";
 import * as fs from "fs";
 import * as path from "path";
 import { execSync } from "child_process";
-import { loadDeploymentConfig } from "./deployConfig";
+import { validateDeploymentEnvironment } from "./deployConfig";
 
 /**
  * Deploys the full CeloHT protocol contract set to the configured network.
@@ -52,28 +52,20 @@ async function main() {
   console.log(`Network: ${network.name} (chainId ${chainId})`);
   console.log(`Deployer: ${deployer.address}`);
 
-  const cfg = loadDeploymentConfig(network.name);
+  const cfg = validateDeploymentEnvironment();
 
-  let usdmAddress = cfg.usdm;
-  let generalTreasury = cfg.generalTreasury;
-  let educationTreasury = cfg.educationTreasury;
-  let reforestationTreasury = cfg.reforestationTreasury;
-  let governanceTreasury = cfg.governanceTreasury;
+  const usdmAddress = cfg.usdm;
+  const generalTreasury = cfg.generalTreasury;
+  const educationTreasury = cfg.educationTreasury;
+  const reforestationTreasury = cfg.reforestationTreasury;
+  const governanceTreasury = cfg.governanceTreasury;
 
-  if (network.name !== "celoSepolia") {
-    // Local/hardhat network: no real USDm or treasury exists. Deploy a mock
-    // token and use the deployer as a stand-in treasury for local testing
-    // only — this path is never reachable for Celo Sepolia.
-    const mockUsdm = await (
-      await ethers.getContractFactory("MockUSDm")
-    ).deploy();
-    await mockUsdm.waitForDeployment();
-    usdmAddress = await mockUsdm.getAddress();
-    generalTreasury = deployer.address;
-    educationTreasury = deployer.address;
-    reforestationTreasury = deployer.address;
-    governanceTreasury = deployer.address;
-    console.log(`(local network) Deployed MockUSDm at ${usdmAddress}`);
+  const outDir = path.join(__dirname, "deployments");
+  const outFile = path.join(outDir, `${network.name}.json`);
+  if (fs.existsSync(outFile)) {
+    throw new Error(
+      `Refusing to overwrite existing deployment manifest at ${outFile}. Review it before starting a fresh deployment.`,
+    );
   }
 
   console.log(`USDm: ${usdmAddress}`);
@@ -169,6 +161,13 @@ async function main() {
     deploymentBlock: deploymentTx
       ? ((await deploymentTx.wait())?.blockNumber ?? null)
       : null,
+    transactionHashes: {
+      agentRegistry: deploymentTx?.hash ?? null,
+      servicePayments: payments.deploymentTransaction()?.hash ?? null,
+      education: education.deploymentTransaction()?.hash ?? null,
+      reforestation: reforestation.deploymentTransaction()?.hash ?? null,
+      governance: governance.deploymentTransaction()?.hash ?? null,
+    },
     deploymentTimestamp: new Date().toISOString(),
     compilerVersion: "0.8.24",
     optimizerRuns: 200,
@@ -176,9 +175,7 @@ async function main() {
     verification: "NOT VERIFIED — run scripts/verifyContracts.ts",
   };
 
-  const outDir = path.join(__dirname, "deployments");
   fs.mkdirSync(outDir, { recursive: true });
-  const outFile = path.join(outDir, `${network.name}.json`);
   fs.writeFileSync(outFile, JSON.stringify(manifest, null, 2));
   console.log(`\nDeployment manifest written to ${outFile}`);
 }

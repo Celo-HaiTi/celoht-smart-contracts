@@ -20,28 +20,41 @@ export interface DeploymentConfig {
   governanceTreasury: string;
 }
 
+export const REQUIRED_DEPLOYMENT_ENV_VARS = [
+  "SEPOLIA_RPC_URL",
+  "PRIVATE_KEY",
+  "USDM_ADDRESS_CELO_SEPOLIA",
+  "GENERAL_TREASURY",
+  "EDUCATION_TREASURY",
+  "REFORESTATION_TREASURY",
+  "GOVERNANCE_TREASURY",
+] as const;
+
 function requireEnv(name: string): string {
-  const value = process.env[name];
+  const value = process.env[name]?.trim();
   if (!value) {
-    throw new Error(
-      `Missing required environment variable: ${name}. Deployment configuration must be ` +
-        `explicit — this repository does not silently substitute a different address.`,
-    );
+    throw new Error(`Missing required deployment secret: ${name}`);
   }
   return value;
 }
 
 function requireValidAddress(name: string, value: string): string {
   if (!isAddress(value)) {
-    throw new Error(`${name}=${value} is not a valid Ethereum/Celo address.`);
+    throw new Error(`Invalid EVM address format: ${name}`);
   }
   const checksummed = getAddress(value);
   if (
     checksummed === getAddress("0x0000000000000000000000000000000000000000")
   ) {
-    throw new Error(`${name} must not be the zero address.`);
+    throw new Error(`Invalid EVM address format: ${name}`);
   }
   return checksummed;
+}
+
+export function validateDeploymentEnvironment(): DeploymentConfig {
+  requireEnv("SEPOLIA_RPC_URL");
+  requireEnv("PRIVATE_KEY");
+  return loadDeploymentConfig("celoSepolia");
 }
 
 /**
