@@ -25,7 +25,7 @@ Configure these secrets before manually dispatching
 The RPC URL and private key are never committed or printed. The workflow first
 compiles the contracts and runs `check:deployment`. That check confirms RPC
 connectivity, chain ID, deployer address detection, deployer CELO balance,
-treasury addresses, and USDm contract metadata. A balance below `0.01 CELO`
+treasury addresses, and USDm contract metadata. A balance below `0.10 CELO`
 stops the workflow before deployment.
 
 ## Safe Local Checks
@@ -66,6 +66,6 @@ manifest and explorer results manually before integrating contract addresses.
 
 1. Create the GitHub environment `celo-sepolia` and add the required secrets.
 2. Verify the USDm and treasury addresses on Celo Sepolia.
-3. Fund the deployer address with at least `0.01 CELO` on Celo Sepolia.
+3. Fund the deployer address with at least `0.10 CELO` on Celo Sepolia.
 4. Review the compile, test, and readiness outputs.
 5. Manually dispatch the deployment workflow.

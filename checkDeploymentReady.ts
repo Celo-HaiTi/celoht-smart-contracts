@@ -1,6 +1,8 @@
 import { ethers, network } from "hardhat";
 import { validateDeploymentEnvironment } from "./deployConfig";
 
+const MINIMUM_DEPLOYER_BALANCE = ethers.parseEther("0.10");
+
 async function main() {
   const cfg = validateDeploymentEnvironment();
 
@@ -37,11 +39,10 @@ async function main() {
     );
   }
 
-  const minimumBalance = ethers.parseEther("0.01");
-  if (balance < minimumBalance) {
+  if (balance < MINIMUM_DEPLOYER_BALANCE) {
     throw new Error(
       `Insufficient deployer CELO balance: ${ethers.formatEther(balance)} CELO. ` +
-        `At least ${ethers.formatEther(minimumBalance)} CELO is required.`,
+        `At least ${ethers.formatEther(MINIMUM_DEPLOYER_BALANCE)} CELO is required for the full deployment.`,
     );
   }
 
