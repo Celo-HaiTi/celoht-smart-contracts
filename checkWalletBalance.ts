@@ -15,14 +15,14 @@ async function main() {
   console.log(`Native token: ${nativeSymbol}`);
   console.log(`Balance: ${ethers.formatEther(balance)} ${nativeSymbol}`);
 
-  const minRequired = ethers.parseEther("0.01");
+  const minRequired = ethers.parseEther("0.10");
   console.log(
-    `Recommended minimum for deploy: ${ethers.formatEther(minRequired)} ${nativeSymbol}`,
+    `Minimum for full deploy: ${ethers.formatEther(minRequired)} ${nativeSymbol}`,
   );
 
   if (balance < minRequired) {
     console.error(
-      `WARNING: balance is below the recommended minimum for deployment. ` +
+      `WARNING: balance is below the minimum required for deployment. ` +
         `Fund this wallet before attempting a live deploy on ${network.name}.`,
     );
     process.exitCode = 1;
