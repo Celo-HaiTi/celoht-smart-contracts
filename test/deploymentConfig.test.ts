@@ -11,6 +11,7 @@ import {
 const requiredVariables = [
   "SEPOLIA_RPC_URL",
   "PRIVATE_KEY",
+  "PROTOCOL_ADMIN",
   "USDM_ADDRESS_CELO_SEPOLIA",
   "GENERAL_TREASURY",
   "EDUCATION_TREASURY",
@@ -21,6 +22,7 @@ const requiredVariables = [
 const mockEnvironment: Record<(typeof requiredVariables)[number], string> = {
   SEPOLIA_RPC_URL: "https://sepolia.example.invalid",
   PRIVATE_KEY: `0x${"11".repeat(32)}`,
+  PROTOCOL_ADMIN: `0x${"77".repeat(20)}`,
   USDM_ADDRESS_CELO_SEPOLIA: `0x${"22".repeat(20)}`,
   GENERAL_TREASURY: `0x${"33".repeat(20)}`,
   EDUCATION_TREASURY: `0x${"44".repeat(20)}`,
@@ -57,7 +59,7 @@ describe("deployment configuration", () => {
     }
   });
 
-  it("passes when all seven required variables are present", () => {
+  it("passes when all eight required variables are present", () => {
     expect(validateDeploymentEnvironment()).to.deep.include({
       usdm: mockEnvironment.USDM_ADDRESS_CELO_SEPOLIA,
     });

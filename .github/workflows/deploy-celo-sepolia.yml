@@ -27,6 +27,7 @@ jobs:
         env:
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PROTOCOL_ADMIN: ${{ secrets.PROTOCOL_ADMIN }}
           USDM_ADDRESS_CELO_SEPOLIA: ${{ secrets.USDM_ADDRESS_CELO_SEPOLIA }}
           GENERAL_TREASURY: ${{ secrets.GENERAL_TREASURY }}
           EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}
@@ -37,6 +38,7 @@ jobs:
           for secret_name in \
             SEPOLIA_RPC_URL \
             PRIVATE_KEY \
+            PROTOCOL_ADMIN \
             USDM_ADDRESS_CELO_SEPOLIA \
             GENERAL_TREASURY \
             EDUCATION_TREASURY \
@@ -57,6 +59,7 @@ jobs:
         env:
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PROTOCOL_ADMIN: ${{ secrets.PROTOCOL_ADMIN }}
           USDM_ADDRESS_CELO_SEPOLIA: ${{ secrets.USDM_ADDRESS_CELO_SEPOLIA }}
           GENERAL_TREASURY: ${{ secrets.GENERAL_TREASURY }}
           EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}
@@ -68,6 +71,7 @@ jobs:
         env:
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PROTOCOL_ADMIN: ${{ secrets.PROTOCOL_ADMIN }}
           USDM_ADDRESS_CELO_SEPOLIA: ${{ secrets.USDM_ADDRESS_CELO_SEPOLIA }}
           GENERAL_TREASURY: ${{ secrets.GENERAL_TREASURY }}
           EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}
@@ -79,6 +83,7 @@ jobs:
         env:
           SEPOLIA_RPC_URL: ${{ secrets.SEPOLIA_RPC_URL }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PROTOCOL_ADMIN: ${{ secrets.PROTOCOL_ADMIN }}
           USDM_ADDRESS_CELO_SEPOLIA: ${{ secrets.USDM_ADDRESS_CELO_SEPOLIA }}
           GENERAL_TREASURY: ${{ secrets.GENERAL_TREASURY }}
           EDUCATION_TREASURY: ${{ secrets.EDUCATION_TREASURY }}

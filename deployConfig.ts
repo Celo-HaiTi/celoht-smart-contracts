@@ -13,6 +13,7 @@ import { isAddress, getAddress } from "ethers";
  */
 
 export interface DeploymentConfig {
+  protocolAdmin: string;
   usdm: string;
   generalTreasury: string;
   educationTreasury: string;
@@ -23,6 +24,7 @@ export interface DeploymentConfig {
 export const REQUIRED_DEPLOYMENT_ENV_VARS = [
   "SEPOLIA_RPC_URL",
   "PRIVATE_KEY",
+  "PROTOCOL_ADMIN",
   "USDM_ADDRESS_CELO_SEPOLIA",
   "GENERAL_TREASURY",
   "EDUCATION_TREASURY",
@@ -73,6 +75,10 @@ export function loadDeploymentConfig(networkName: string): DeploymentConfig {
     "USDM_ADDRESS_CELO_SEPOLIA",
     requireEnv("USDM_ADDRESS_CELO_SEPOLIA"),
   );
+  const protocolAdmin = requireValidAddress(
+    "PROTOCOL_ADMIN",
+    requireEnv("PROTOCOL_ADMIN"),
+  );
   const generalTreasury = requireValidAddress(
     "GENERAL_TREASURY",
     requireEnv("GENERAL_TREASURY"),
@@ -91,6 +97,7 @@ export function loadDeploymentConfig(networkName: string): DeploymentConfig {
   );
 
   return {
+    protocolAdmin,
     usdm,
     generalTreasury,
     educationTreasury,

@@ -5,6 +5,7 @@ const MINIMUM_DEPLOYER_BALANCE = ethers.parseEther("0.10");
 
 async function main() {
   const cfg = validateDeploymentEnvironment();
+  console.log(`Protocol admin: ${cfg.protocolAdmin}`);
 
   if (network.name !== "celoSepolia") {
     throw new Error("Deployment readiness requires the celoSepolia network.");

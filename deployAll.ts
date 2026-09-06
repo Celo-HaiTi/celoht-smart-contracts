@@ -56,6 +56,12 @@ async function main() {
   const cfg = validateDeploymentEnvironment();
 
   const usdmAddress = cfg.usdm;
+  const protocolAdmin = cfg.protocolAdmin;
+  if (protocolAdmin.toLowerCase() === deployer.address.toLowerCase()) {
+    throw new Error(
+      "Refusing deployment: PROTOCOL_ADMIN must be separate from the deployer EOA.",
+    );
+  }
   const generalTreasury = cfg.generalTreasury;
   const educationTreasury = cfg.educationTreasury;
   const reforestationTreasury = cfg.reforestationTreasury;
@@ -70,6 +76,7 @@ async function main() {
   }
 
   console.log(`USDm: ${usdmAddress}`);
+  console.log(`Protocol admin: ${protocolAdmin}`);
   console.log(`General Treasury: ${generalTreasury}`);
   console.log(`Education Treasury: ${educationTreasury}`);
   console.log(`Reforestation Treasury: ${reforestationTreasury}`);
@@ -81,7 +88,7 @@ async function main() {
     usdmAddress,
     generalTreasury,
     FEES.registration,
-    deployer.address,
+    protocolAdmin,
   );
   await registry.waitForDeployment();
   console.log(`CeloHTAgentRegistry: ${await registry.getAddress()}`);
@@ -91,7 +98,7 @@ async function main() {
     usdmAddress,
     await registry.getAddress(),
     generalTreasury,
-    deployer.address,
+    protocolAdmin,
     FEES.p2p,
     FEES.education,
   );
@@ -103,7 +110,7 @@ async function main() {
     usdmAddress,
     educationTreasury,
     FEES.certificate,
-    deployer.address,
+    protocolAdmin,
   );
   await education.waitForDeployment();
   console.log(`CeloHTEducation: ${await education.getAddress()}`);
@@ -112,7 +119,7 @@ async function main() {
   const reforestation = await Reforestation.deploy(
     usdmAddress,
     reforestationTreasury,
-    deployer.address,
+    protocolAdmin,
   );
   await reforestation.waitForDeployment();
   console.log(`CeloHTReforestation: ${await reforestation.getAddress()}`);
@@ -122,7 +129,7 @@ async function main() {
     usdmAddress,
     governanceTreasury,
     FEES.vote,
-    deployer.address,
+    protocolAdmin,
   );
   await governance.waitForDeployment();
   console.log(`CeloHTGovernance: ${await governance.getAddress()}`);
@@ -143,6 +150,7 @@ async function main() {
     network: network.name,
     chainId: Number(chainId),
     deployer: deployer.address,
+    protocolAdmin,
     usdm: usdmAddress,
     generalTreasury,
     educationTreasury,
