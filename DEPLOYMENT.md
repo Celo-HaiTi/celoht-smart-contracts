@@ -16,6 +16,7 @@ Configure these secrets before manually dispatching
 
 - `SEPOLIA_RPC_URL`
 - `PRIVATE_KEY`
+- `PROTOCOL_ADMIN`
 - `USDM_ADDRESS_CELO_SEPOLIA`
 - `GENERAL_TREASURY`
 - `EDUCATION_TREASURY`
@@ -36,11 +37,18 @@ redeploy it as part of routine validation. The complete public record is in
 | CeloHTReforestation   | `0xc1eEd81Aa989D818897CCffc755dC2a9B37F9e2A` |
 | CeloHTGovernance      | `0x7D384851FAbB912287206556479Dd30c740CAdA5` |
 
-The RPC URL and private key are never committed or printed. The workflow first
+The deployer key submits transactions only. `PROTOCOL_ADMIN` receives the
+contract admin roles and must be a reviewed Safe or governance authority; it
+must not default to the deployer EOA. The RPC URL and private key are never committed or printed. The workflow first
 compiles the contracts and runs `check:deployment`. That check confirms RPC
 connectivity, chain ID, deployer address detection, deployer CELO balance,
 treasury addresses, and USDm contract metadata. A balance below `0.10 CELO`
 stops the workflow before deployment.
+
+The recorded deployment predates this separation and must be treated as a
+testnet deployment with EOA-held admin custody until a separately approved role
+handoff is completed. This repository does not perform that handoff
+automatically.
 
 ## Safe Local Checks
 
