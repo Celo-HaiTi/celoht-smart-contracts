@@ -3,6 +3,7 @@
     "network": "celoSepolia",
     "chainId": 11142220,
     "deployer": "0xAC4F2AE7127150eAf411E7Be774531af9c94Bb66",
+    "protocolAdmin": "0xAC4F2AE7127150eAf411E7Be774531af9c94Bb66",
     "usdm": "0xdE9e4C3ce781b4bA68120d6261cbad65ce0aB00b",
     "generalTreasury": "0xd856e0599cc49C9cef6C358d2c2f064112A6b384",
     "educationTreasury": "0xd856e0599cc49C9cef6C358d2c2f064112A6b384",
@@ -39,7 +40,15 @@
     "optimizerEnabled": true,
     "optimizerRuns": 200,
     "verification": "VERIFIED",
+    "verificationStatus": "VERIFIED",
     "verificationSource": "Celo Sepolia Blockscout",
+    "abiReferences": {
+      "agentRegistry": "artifacts/contracts/CeloHTAgentRegistry.sol/CeloHTAgentRegistry.json",
+      "servicePayments": "artifacts/contracts/CeloHTServicePayments.sol/CeloHTServicePayments.json",
+      "education": "artifacts/contracts/CeloHTEducation.sol/CeloHTEducation.json",
+      "reforestation": "artifacts/contracts/CeloHTReforestation.sol/CeloHTReforestation.json",
+      "governance": "artifacts/contracts/CeloHTGovernance.sol/CeloHTGovernance.json"
+    },
     "gitCommit": null,
     "metadataSource": "Public Celo Sepolia RPC and Blockscout transaction data; gitCommit was not available from the deployment record.",
     "rpcUrl": "https://forno.celo-sepolia.celo-testnet.org",
@@ -713,7 +722,8 @@
             "stateMutability": "view",
             "type": "function"
           }
-        ]
+        ],
+        "abiReference": "artifacts/contracts/CeloHTAgentRegistry.sol/CeloHTAgentRegistry.json"
       },
       "servicePayments": {
         "address": "0xe91b8A6302FCf5a64A84c671C61B0F1DdA5F0ad2",
@@ -1450,7 +1460,8 @@
             "stateMutability": "view",
             "type": "function"
           }
-        ]
+        ],
+        "abiReference": "artifacts/contracts/CeloHTServicePayments.sol/CeloHTServicePayments.json"
       },
       "education": {
         "address": "0x7422F20F025aCaad86c4de5E6Fa0F3a7B55ac09a",
@@ -2221,7 +2232,8 @@
             "stateMutability": "view",
             "type": "function"
           }
-        ]
+        ],
+        "abiReference": "artifacts/contracts/CeloHTEducation.sol/CeloHTEducation.json"
       },
       "reforestation": {
         "address": "0xc1eEd81Aa989D818897CCffc755dC2a9B37F9e2A",
@@ -2762,7 +2774,8 @@
             "stateMutability": "view",
             "type": "function"
           }
-        ]
+        ],
+        "abiReference": "artifacts/contracts/CeloHTReforestation.sol/CeloHTReforestation.json"
       },
       "governance": {
         "address": "0x7D384851FAbB912287206556479Dd30c740CAdA5",
@@ -3607,7 +3620,8 @@
             "stateMutability": "nonpayable",
             "type": "function"
           }
-        ]
+        ],
+        "abiReference": "artifacts/contracts/CeloHTGovernance.sol/CeloHTGovernance.json"
       }
     }
   }

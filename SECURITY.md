@@ -2,21 +2,21 @@
 
 ## Honest status
 
-| Item                                                         | Status                                              |
-| ------------------------------------------------------------ | --------------------------------------------------- |
-| Contracts written to professional Solidity practice          | Implemented                                         |
-| Test suite covering the invariants in section 18 of the spec | Implemented                                         |
-| `npx hardhat compile` actually run in this delivery          | **Executed successfully**                           |
-| `npx hardhat test` / coverage actually run                   | **Executed successfully**                           |
-| Randomized property test                                     | **Executed successfully**                           |
-| Foundry fuzz test                                            | **Executed successfully**                           |
-| Echidna property campaign                                    | **Executed successfully**                           |
-| CI quality gates                                             | **Configured**                                      |
-| Slither / static analysis actually run                       | **Not executed**                                    |
-| Independent third-party audit                                | **Not performed. Not claimed.**                     |
-| Testnet deployment                                           | **Deployed on Celo Sepolia; manifest recorded**     |
-| Mainnet deployment                                           | **Not performed**                                   |
-| Celo Sepolia source verification                             | **Verified on Blockscout; see deployment manifest** |
+| Item                                                         | Status                                                           |
+| ------------------------------------------------------------ | ---------------------------------------------------------------- |
+| Contracts written to professional Solidity practice          | Implemented                                                      |
+| Test suite covering the invariants in section 18 of the spec | Implemented                                                      |
+| `npx hardhat compile` actually run in this delivery          | **Executed successfully**                                        |
+| `npx hardhat test` / coverage actually run                   | **Executed successfully**                                        |
+| Randomized property test                                     | **Executed successfully**                                        |
+| Foundry fuzz test                                            | **Not executed: `forge` is not installed in this environment**   |
+| Echidna property campaign                                    | **Not executed: `echidna` is not installed in this environment** |
+| CI quality gates                                             | **Configured**                                                   |
+| Slither / static analysis actually run                       | **Not executed**                                                 |
+| Independent third-party audit                                | **Not performed. Not claimed.**                                  |
+| Testnet deployment                                           | **Deployed on Celo Sepolia; manifest recorded**                  |
+| Mainnet deployment                                           | **Not performed**                                                |
+| Celo Sepolia source verification                             | **Verified on Blockscout; see deployment manifest**              |
 
 The code has been compiled and tested locally against the installed
 `hardhat-toolbox` and `@openzeppelin/contracts@^5` dependencies. Run the
@@ -61,7 +61,7 @@ Report back and this can be corrected quickly rather than papered over.
   `test/InvariantSweep.test.ts` across a range of prices and bps values.
 - **Custom errors** throughout instead of require-strings, for gas and
   precision (see each interface's `error` declarations).
-- **Malicious-token awareness**: `contracts/mocks/MockMaliciousTokens.sol`
+- **Malicious-token awareness**: `contracts/MockMaliciousTokens.sol`
   includes a fee-on-transfer mock specifically to test how the protocol
   behaves against non-standard tokens. Because the real `usdm` address is
   `immutable` and fixed at deployment, this class of attack is mitigated by
@@ -75,16 +75,16 @@ Report back and this can be corrected quickly rather than papered over.
 
 ## Explicitly NOT done here (and why)
 
-- **Fuzzing (Echidna/Foundry)**: Foundry fuzzes the split invariant for 10,000
-  randomized amount/BPS cases through `test/foundry/SplitInvariant.t.sol`.
-  Echidna independently runs the stateful property in
-  `test/echidna/SplitInvariant.sol`. These campaigns cover the arithmetic
-  invariant; they do not replace a full stateful protocol fuzz suite or an
-  independent audit.
+- **Fuzzing (Echidna/Foundry)**: harnesses are committed under `test/`, but
+  neither tool was installed in this validation environment. They must run in a
+  tool-enabled security job before Mainnet consideration; they do not replace a
+  full stateful protocol fuzz suite or an independent audit.
 - **Slither**: not executed in this repository validation. Run it in CI or an
   audit environment before mainnet.
-- **Dependency audit**: `npm audit --omit=dev --audit-level=high` reported no
-  known production dependency vulnerabilities on 2026-09-05.
+- **Dependency audit**: the production-only audit is a CI gate; the full
+  `npm audit` currently reports transitive development-tool vulnerabilities
+  requiring breaking upgrades. Mainnet work must resolve or explicitly accept
+  these advisories before release.
 - **Independent audit**: out of scope for an AI coding session by
   definition; a real audit requires an independent human security firm.
 

@@ -38,6 +38,9 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Coverage
+        run: npm run coverage
+
       - name: Typecheck
         run: npx tsc --noEmit
 
@@ -46,3 +49,8 @@ jobs:
 
       - name: Format check
         run: npm run format:check
+
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
