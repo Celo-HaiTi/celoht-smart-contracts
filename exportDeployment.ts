@@ -29,6 +29,13 @@ function main() {
     const manifest = JSON.parse(
       fs.readFileSync(path.join(deploymentsDir, file), "utf-8"),
     );
+    for (const [, manifestKey] of contracts) {
+      if (typeof manifest[manifestKey] !== "string") {
+        throw new Error(
+          `Deployment manifest ${file} is missing ${manifestKey} address.`,
+        );
+      }
+    }
     const contractConfig = Object.fromEntries(
       contracts.map(([contractName, manifestKey]) => {
         const artifactPath = path.join(
@@ -37,9 +44,16 @@ function main() {
           `${contractName}.json`,
         );
         const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf-8"));
+        if (!Array.isArray(artifact.abi)) {
+          throw new Error(`Artifact ${artifactPath} does not contain an ABI.`);
+        }
         return [
           manifestKey,
-          { address: manifest[manifestKey], abi: artifact.abi },
+          {
+            address: manifest[manifestKey],
+            abi: artifact.abi,
+            abiReference: manifest.abiReferences?.[manifestKey] ?? artifactPath,
+          },
         ];
       }),
     );

@@ -145,6 +145,18 @@ async function main() {
   }
 
   const deploymentTx = registry.deploymentTransaction();
+  const deploymentBlocks = {
+    agentRegistry: (await deploymentTx?.wait())?.blockNumber ?? null,
+    servicePayments:
+      (await payments.deploymentTransaction()?.wait())?.blockNumber ?? null,
+    education:
+      (await education.deploymentTransaction()?.wait())?.blockNumber ?? null,
+    reforestation:
+      (await reforestation.deploymentTransaction()?.wait())?.blockNumber ??
+      null,
+    governance:
+      (await governance.deploymentTransaction()?.wait())?.blockNumber ?? null,
+  };
 
   const manifest = {
     network: network.name,
@@ -167,9 +179,7 @@ async function main() {
     education: await education.getAddress(),
     reforestation: await reforestation.getAddress(),
     governance: await governance.getAddress(),
-    deploymentBlock: deploymentTx
-      ? ((await deploymentTx.wait())?.blockNumber ?? null)
-      : null,
+    deploymentBlocks,
     transactionHashes: {
       agentRegistry: deploymentTx?.hash ?? null,
       servicePayments: payments.deploymentTransaction()?.hash ?? null,
@@ -182,6 +192,19 @@ async function main() {
     optimizerRuns: 200,
     gitCommit,
     verification: "NOT VERIFIED — run scripts/verifyContracts.ts",
+    verificationStatus: "NOT VERIFIED",
+    verificationSource: null,
+    abiReferences: {
+      agentRegistry:
+        "artifacts/contracts/CeloHTAgentRegistry.sol/CeloHTAgentRegistry.json",
+      servicePayments:
+        "artifacts/contracts/CeloHTServicePayments.sol/CeloHTServicePayments.json",
+      education: "artifacts/contracts/CeloHTEducation.sol/CeloHTEducation.json",
+      reforestation:
+        "artifacts/contracts/CeloHTReforestation.sol/CeloHTReforestation.json",
+      governance:
+        "artifacts/contracts/CeloHTGovernance.sol/CeloHTGovernance.json",
+    },
   };
 
   fs.mkdirSync(outDir, { recursive: true });

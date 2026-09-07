@@ -52,6 +52,12 @@ async function main() {
     );
   }
   const m = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
+  const protocolAdmin = m.protocolAdmin ?? m.deployer;
+  if (!protocolAdmin) {
+    throw new Error(
+      "Deployment manifest is missing the protocol admin address.",
+    );
+  }
 
   const FEES = {
     registration: 200000000000000000n,
@@ -67,7 +73,7 @@ async function main() {
       m.usdm,
       m.generalTreasury,
       FEES.registration,
-      m.deployer,
+      protocolAdmin,
     ]),
   );
   results.push(
@@ -75,7 +81,7 @@ async function main() {
       m.usdm,
       m.agentRegistry,
       m.generalTreasury,
-      m.deployer,
+      protocolAdmin,
       FEES.p2p,
       FEES.education,
     ]),
@@ -85,14 +91,14 @@ async function main() {
       m.usdm,
       m.educationTreasury,
       FEES.certificate,
-      m.deployer,
+      protocolAdmin,
     ]),
   );
   results.push(
     await verifyOne("CeloHTReforestation", m.reforestation, [
       m.usdm,
       m.reforestationTreasury,
-      m.deployer,
+      protocolAdmin,
     ]),
   );
   results.push(
@@ -100,7 +106,7 @@ async function main() {
       m.usdm,
       m.governanceTreasury,
       FEES.vote,
-      m.deployer,
+      protocolAdmin,
     ]),
   );
 
@@ -108,9 +114,13 @@ async function main() {
   const hasAttempt = results.some((result) => result !== null);
   if (!hasFailure && hasAttempt) {
     m.verification = "VERIFIED";
+    m.verificationStatus = "VERIFIED";
+    m.verificationSource = "Celo Sepolia Blockscout";
   }
   if (hasFailure) {
     m.verification = "NOT VERIFIED";
+    m.verificationStatus = "NOT VERIFIED";
+    m.verificationSource = "Celo Sepolia Blockscout";
     process.exitCode = 1;
   }
   fs.writeFileSync(manifestPath, JSON.stringify(m, null, 2));
