@@ -51,6 +51,8 @@ jobs:
         run: npm run format:check
 
       - name: Secret scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          docker run --rm
+          -v "${{ github.workspace }}:/repo:ro"
+          zricethezav/gitleaks:v8.24.2
+          detect --source=/repo --redact --verbose
