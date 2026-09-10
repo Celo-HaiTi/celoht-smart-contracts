@@ -9,7 +9,7 @@ This repository contains the testnet-ready smart-contract stack and operational 
 Repository state as of 2026-09-05:
 
 - Hardhat compilation succeeds
-- Test suite passes: 105 tests passing
+- Test suite passes: 108 tests passing
 - Production dependency audit reports no known vulnerabilities
 - Celo Sepolia deployment is recorded in `deployments/celoSepolia.json`
 - The five deployed contracts are verified on Celo Sepolia Blockscout
