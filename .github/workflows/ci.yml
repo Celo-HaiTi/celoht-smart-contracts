@@ -32,6 +32,9 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
+      - name: Guard against production mock imports
+        run: npm run guard:production-mocks
+
       - name: Compile
         run: npm run compile
 
