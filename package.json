@@ -12,6 +12,7 @@
     "fuzz:foundry": "forge test --root . --match-contract SplitInvariantTest",
     "fuzz:echidna": "echidna test/echidna/SplitInvariant.sol --contract SplitInvariant --test-mode property --test-limit 10000 --disable-slither --solc-args \"--base-path . --include-path node_modules\"",
     "lint": "eslint . --ext .ts",
+    "guard:production-mocks": "node scripts/check-production-mocks.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:deployment": "hardhat run checkDeploymentReady.ts --network celoSepolia",
