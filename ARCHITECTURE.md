@@ -56,8 +56,8 @@ CeloHT contract addresses are recorded in
 Other network addresses (verified via CeloScan on 2026-08-30 — see
 `.env.example` for full source notes):
 
-- Mainnet: `0x765DE816845861e75A25fCA122bb6898B8B1282a` (the same proxy
-  contract formerly labeled cUSD, rebranded "Mento Dollar (USDm)" by Mento).
+- Mainnet: `0x765DE816845861e75A25fCA122bb6898B8B1282a` (the Mento Dollar
+  (USDm) proxy contract).
 - Alfajores testnet: `0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1` (confirmed
   live on Alfajores CeloScan and matches the address used in Celo's own
   official ContractKit→viem migration docs).
