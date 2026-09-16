@@ -61,7 +61,7 @@ This repository implements the CeloHT smart-contract layer for agent registratio
 ## Network Status
 
 - Celo Sepolia chain ID: 11142220
-- The repository does not configure Celo Mainnet or any legacy testnet.
+- The repository does not configure Celo Mainnet or any previous testnet.
 - No real deployment occurred in this session; real on-chain deployment remains blocked behind a verified environment and explicit deployment approval.
 
 ## USDm Status
