@@ -62,6 +62,18 @@ npm run check:deployment
 npm run check:wallet
 ```
 
+The read-only manifest check does not require a deployer key or funded wallet:
+
+```sh
+npm run check:manifest
+```
+
+It checks the live Celo Sepolia chain ID and deployed bytecode at every
+recorded contract address. It compares each deployment transaction receipt
+with the manifest address and block, falling back to the public Blockscout API
+when Forno does not retain the historical receipt. This does not replace
+source-code verification or an independent security audit.
+
 The actual deployment command is manual and explicit:
 
 ```sh
