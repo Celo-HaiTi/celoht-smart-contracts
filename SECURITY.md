@@ -61,12 +61,12 @@ Report back and this can be corrected quickly rather than papered over.
   `test/InvariantSweep.test.ts` across a range of prices and bps values.
 - **Custom errors** throughout instead of require-strings, for gas and
   precision (see each interface's `error` declarations).
-- **Malicious-token awareness**: `contracts/MockMaliciousTokens.sol`
+- **Malicious-token awareness**: `contracts/mocks/MockMaliciousTokens.sol`
   includes a fee-on-transfer mock specifically to test how the protocol
   behaves against non-standard tokens. Because the real `usdm` address is
   `immutable` and fixed at deployment, this class of attack is mitigated by
   construction as long as the deployed USDm address is the genuine, standard
-  ERC-20 confirmed in `docs/ARCHITECTURE.md` — the mock exists to make that
+  ERC-20 confirmed in `ARCHITECTURE.md` — the mock exists to make that
   assumption explicit and testable, not because the contracts try to be
   fee-on-transfer-safe generically.
 - **No unrestricted withdrawal function**: no contract has a `withdrawAll()`
@@ -81,10 +81,12 @@ Report back and this can be corrected quickly rather than papered over.
   full stateful protocol fuzz suite or an independent audit.
 - **Slither**: not executed in this repository validation. Run it in CI or an
   audit environment before mainnet.
-- **Dependency audit**: the production-only audit is a CI gate; the full
-  `npm audit` currently reports transitive development-tool vulnerabilities
-  requiring breaking upgrades. Mainnet work must resolve or explicitly accept
-  these advisories before release.
+- **Dependency audit**: `npm audit --omit=dev --audit-level=high` reports zero
+  vulnerabilities. The full development-tool tree reports 60 advisories (1
+  critical, 22 high, 18 moderate, 19 low), including a critical Handlebars
+  advisory. Several direct Hardhat/toolbox fixes require major-version
+  upgrades; they were not applied without compatibility validation. Resolve
+  and retest these advisories before release.
 - **Independent audit**: out of scope for an AI coding session by
   definition; a real audit requires an independent human security firm.
 

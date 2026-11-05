@@ -23,7 +23,7 @@ The codebase is organized as a Hardhat + Solidity project with local TypeScript 
 ## Existing Functionality
 
 - Solidity compilation succeeds with Hardhat.
-- The contract test suite passes locally (`108 passing`).
+- The contract test suite passes locally (`109 passing`).
 - Invariant and property-based coverage exists for service payment splitting logic.
 - Deployment configuration is centralized and rejects missing or malformed required values.
 - Celo Sepolia deployment automation is present and wired to GitHub Actions secrets.
@@ -41,7 +41,7 @@ The codebase is organized as a Hardhat + Solidity project with local TypeScript 
 ## Mock/Simulated Functionality
 
 - `contracts/mocks/MockUSDm.sol` is a test-only USDm stand-in.
-- `contracts/MockMaliciousTokens.sol` is a test-only token used to validate reverts for non-standard or fee-on-transfer behavior.
+- `contracts/mocks/MockMaliciousTokens.sol` is a test-only token used to validate reverts for non-standard or fee-on-transfer behavior.
 - The repository’s live deployment path is not simulated; it is gated by real environment variables and real network execution.
 
 ## Dependencies
@@ -113,7 +113,7 @@ The codebase is organized as a Hardhat + Solidity project with local TypeScript 
 
 ## Current Status
 
-VALIDATION FAILED FOR UNRELATED DUPLICATE-ARTIFACT ISSUE
+VALIDATION PASSED; ECOSYSTEM PILOT REMAINS BLOCKED
 
 ## Legacy Terminology Cleanup Audit
 
@@ -127,13 +127,13 @@ VALIDATION FAILED FOR UNRELATED DUPLICATE-ARTIFACT ISSUE
 - Files deleted: 0.
 - Migrations performed: 0.
 - Links repaired: 0; no link breakage was introduced.
-- Tests executed: `npx hardhat compile && npx hardhat test` (fails due duplicate `MockUSDm` artifacts in the project, not because of the `legacy` cleanup).
+- Tests executed: `npm run compile` and `npm test` (109 passing); the initial duplicate-artifact failure was fixed and rerun successfully.
 - Final search results: `legacy` = 0, `cUSD` = 0, `Celo-HT` = 0.
 
 ### Change Table
 
-| Repository | File | Line/Section | Previous Usage | New Usage | Reason |
-| ---------- | ---- | ------------ | -------------- | --------- | ------ |
+| Repository             | File                                                               | Line/Section   | Previous Usage       | New Usage              | Reason                                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------ | -------------- | -------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | celoht-smart-contracts | [REPOSITORY_PRODUCT_READINESS.md](REPOSITORY_PRODUCT_READINESS.md) | Network Status | "any legacy testnet" | "any previous testnet" | Neutralized a prohibited term while preserving the factual meaning that the repository does not target an older network configuration. |
 
 ### Final Verification
@@ -142,11 +142,13 @@ VALIDATION FAILED FOR UNRELATED DUPLICATE-ARTIFACT ISSUE
 - `cUSD`: PASS
 - `Celo-HT`: PASS
 - broken links: PASS
-- tests/build: FAIL
+- tests/build: PASS
 
 Fresh verification commands run after the cleanup:
 
 - `grep -RIn --exclude-dir=.git --exclude-dir=node_modules -i -E 'legacy|cUSD|Celo-HT' .` returned no matches.
-- `npx hardhat compile && npx hardhat test` did not pass in the current workspace because Hardhat reports duplicate artifacts for `MockUSDm` across both `contracts/MockUSDm.sol` and `contracts/mocks/MockUSDm.sol` (`HH701`). This is unrelated to the `legacy` terminology cleanup and remains a repository validation issue to fix separately.
+- The initial test run exposed duplicate `MockUSDm` artifacts and the production mock guard failure. The duplicate test-only sources in the production contract root were removed; `npm test` now passes with 109 tests and `npm run guard:production-mocks` passes.
+- `npm run check:manifest` verified all five recorded contract addresses have deployed bytecode on Celo Sepolia and matched successful Blockscout deployment transactions and blocks. Forno does not retain those historical receipts, so the verifier uses Blockscout for receipt comparison.
+- `npm audit --omit=dev --audit-level=high` reports zero vulnerabilities. The full development-tool dependency tree reports 60 advisories: 1 critical, 22 high, 18 moderate, and 19 low. Compatible remediation has not been applied because the suggested Hardhat/toolbox upgrades include major-version changes.
 
 This repository remains intentionally scoped to smart-contract functionality and does not introduce unrelated product or governance changes.
