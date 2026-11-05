@@ -4,10 +4,7 @@ import path from "path";
 
 describe("production mock guard", () => {
   it("keeps test-only mock contracts out of the production source root", () => {
-    const mockFiles = [
-      "MockUSDm.sol",
-      "MockMaliciousTokens.sol",
-    ];
+    const mockFiles = ["MockUSDm.sol", "MockMaliciousTokens.sol"];
 
     for (const fileName of mockFiles) {
       const candidate = path.join(__dirname, "..", "contracts", fileName);
