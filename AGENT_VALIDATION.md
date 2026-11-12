@@ -4,6 +4,11 @@ Validation uses the official ERC-8004 Validation Registry. A request records
 the named validator, agent ID, URI, and `bytes32` request hash. It does not
 automatically execute or endorse the agent.
 
+The Sepolia Validation proxy and implementation source are explorer-verified,
+and the implementation source matches the pinned upstream commit. The
+read-only registry preflight has passed. No live validation request or
+response transaction is recorded yet.
+
 ## Request and response
 
 1. The ERC-8004 agent owner or approved operator calls

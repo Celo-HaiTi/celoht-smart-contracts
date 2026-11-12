@@ -5,6 +5,11 @@ Registry. CeloHT service payment accounting remains in
 [`CeloHTServicePayments`](contracts/CeloHTServicePayments.sol); it is not
 replaced by reputation feedback.
 
+The read-only registry and ABI checks have passed, and the local Sepolia-fork
+suite exercises feedback, response, and revocation behavior against deployed
+registry bytecode. No live feedback, revocation, or response transaction has
+been performed by this repository environment.
+
 ## Feedback functions
 
 - `giveFeedback(agentId, value, valueDecimals, tag1, tag2, endpoint,

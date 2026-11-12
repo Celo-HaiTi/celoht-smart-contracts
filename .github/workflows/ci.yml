@@ -41,6 +41,12 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Read-only ERC-8004 Sepolia preflight
+        run: npm run check:erc8004
+
+      - name: Test deployed ERC-8004 implementations on a local Sepolia fork
+        run: npm run test:erc8004:fork
+
       - name: Coverage
         run: npm run coverage
 

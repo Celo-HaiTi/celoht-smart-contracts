@@ -124,3 +124,9 @@ deployment. Review [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) and
 of the existing full protocol deployment workflow. The official registry
 addresses and current source-verification state are in
 [`deployments/erc8004.json`](deployments/erc8004.json).
+
+The read-only Sepolia preflight last succeeded on 2026-11-12. Blockscout
+reports verified proxy and implementation source for all three registries;
+their implementation source matches the pinned official repository commit.
+The identity-link adapter has not been deployed, and no ERC-8004 write
+transactions have been submitted from this repository environment.

@@ -15,6 +15,11 @@ async function main() {
   console.log(`Reputation Registry: ${config.reputationRegistry}`);
   console.log(`Validation Registry: ${config.validationRegistry}`);
   console.log(
+    `EIP-1967 implementations: identity=${config.implementations.identityRegistry}, ` +
+      `reputation=${config.implementations.reputationRegistry}, ` +
+      `validation=${config.implementations.validationRegistry}`,
+  );
+  console.log(
     `Explorer source verification: identity=${config.sourceVerified.identityRegistry}, ` +
       `reputation=${config.sourceVerified.reputationRegistry}, ` +
       `validation=${config.sourceVerified.validationRegistry}`,

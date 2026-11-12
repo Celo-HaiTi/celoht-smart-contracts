@@ -61,6 +61,17 @@ async function main() {
   if (!deployer) {
     throw new Error("No Sepolia transaction signer is configured.");
   }
+  const balance = await ethers.provider.getBalance(deployer.address);
+  const minimumBalance = ethers.parseEther("0.10");
+  if (balance < minimumBalance) {
+    throw new Error(
+      `Insufficient deployer CELO balance: ${ethers.formatEther(balance)} CELO. ` +
+        `At least ${ethers.formatEther(minimumBalance)} CELO is required before deployment.`,
+    );
+  }
+  console.log(
+    `Deployer ${deployer.address} balance: ${ethers.formatEther(balance)} CELO`,
+  );
 
   const Link = await ethers.getContractFactory("CeloHTERC8004IdentityLink");
   const link = await Link.deploy(celoHTRegistry, config.identityRegistry);
@@ -88,11 +99,15 @@ async function main() {
     deploymentTransactionHash: transaction.hash,
     deploymentBlock: receipt.blockNumber,
     deployer: deployer.address,
+    sourceVerificationStatus: "PENDING",
     explorerUrl: `${config.explorerUrl}/address/${address}`,
   };
   fs.writeFileSync(outFile, JSON.stringify(manifest, null, 2));
   console.log(`CeloHT ERC-8004 identity link deployed at ${address}`);
   console.log(`Transaction: ${transaction.hash}`);
+  console.log(
+    "Source verification remains pending until Blockscout confirms it.",
+  );
   console.log(`Deployment record: ${outFile}`);
 }
 

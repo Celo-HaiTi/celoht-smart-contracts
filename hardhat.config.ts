@@ -11,6 +11,7 @@ export const CELO_MAINNET_RPC_URL =
 
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
 const sepoliaRpcUrl = process.env.SEPOLIA_RPC_URL || CELO_SEPOLIA_RPC_URL;
+const forkSepoliaForTests = process.env.ERC8004_FORK_TESTS === "true";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -25,7 +26,9 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      chainId: 31337,
+      chainId: forkSepoliaForTests ? 11155111 : 31337,
+      ...(forkSepoliaForTests ? { hardfork: "cancun" } : {}),
+      ...(forkSepoliaForTests ? { forking: { url: sepoliaRpcUrl } } : {}),
     },
     celoSepolia: {
       url: sepoliaRpcUrl,

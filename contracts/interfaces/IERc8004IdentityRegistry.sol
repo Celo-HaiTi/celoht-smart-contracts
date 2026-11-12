@@ -26,8 +26,29 @@ interface IERC8004IdentityRegistry {
         string newURI,
         address indexed updatedBy
     );
+    event Transfer(
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
+    );
+    event Approval(
+        address indexed owner,
+        address indexed approved,
+        uint256 indexed tokenId
+    );
+    event ApprovalForAll(
+        address indexed owner,
+        address indexed operator,
+        bool approved
+    );
 
     function supportsInterface(bytes4 interfaceId) external view returns (bool);
+
+    function balanceOf(address owner) external view returns (uint256);
+
+    function name() external view returns (string memory);
+
+    function symbol() external view returns (string memory);
 
     function register() external returns (uint256 agentId);
 
@@ -59,6 +80,13 @@ interface IERC8004IdentityRegistry {
         address from,
         address to,
         uint256 agentId
+    ) external;
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 agentId,
+        bytes calldata data
     ) external;
 
     function tokenURI(uint256 agentId) external view returns (string memory);

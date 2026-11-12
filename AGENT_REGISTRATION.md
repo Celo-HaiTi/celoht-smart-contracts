@@ -2,6 +2,12 @@
 
 ## Two identities, one profile link
 
+The registry address and implementation checks are read-only and have passed
+on Celo Sepolia. This repository has not recorded an on-chain ERC-8004
+registration, URI update, wallet-signature operation, or identity-link
+transaction. Local tests of the link adapter do not substitute for those live
+transactions.
+
 CeloHT's existing `registerAgent()` and fee remain unchanged. An agent also
 registers an ERC-721 identity in the official ERC-8004 Identity Registry.
 Each registry assigns its own ID; the IDs are not interchangeable. The
@@ -74,3 +80,7 @@ the connected chain.
 The backend, indexer, Supabase schema, and dApp are not in this repository.
 This document defines the contract/client boundary; it does not claim those
 external integrations are implemented.
+
+Use a dedicated Sepolia test wallet and verify each receipt and resulting
+state before recording an operation as complete. Do not use Mainnet for
+testing.

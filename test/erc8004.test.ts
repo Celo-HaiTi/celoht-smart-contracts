@@ -41,7 +41,7 @@ describe("ERC-8004 integration configuration and registrations", () => {
     );
     expect(
       ERC8004_NETWORKS.celoSepolia.sourceVerified.validationRegistry,
-    ).to.equal(false);
+    ).to.equal(true);
     expect(
       ERC8004_NETWORKS.celoMainnet.sourceVerified.validationRegistry,
     ).to.equal(true);
@@ -96,27 +96,52 @@ describe("ERC-8004 integration configuration and registrations", () => {
     const reputation = new Interface(ERC8004_ABIS.reputation);
     const validation = new Interface(ERC8004_ABIS.validation);
 
-    expect(identity.getFunction("register()")).not.to.equal(null);
-    expect(identity.getFunction("setAgentURI")).not.to.equal(null);
-    expect(identity.getFunction("setAgentWallet")).not.to.equal(null);
-    expect(identity.getFunction("isAuthorizedOrOwner")).not.to.equal(null);
-    for (const functionName of [
-      "giveFeedback",
-      "readFeedback",
-      "readAllFeedback",
-      "revokeFeedback",
-      "getSummary",
+    for (const signature of [
+      "register()",
+      "register(string)",
+      "register(string,(string,bytes)[])",
+      "setAgentURI(uint256,string)",
+      "setAgentWallet(uint256,address,uint256,bytes)",
+      "unsetAgentWallet(uint256)",
+      "isAuthorizedOrOwner(address,uint256)",
+      "safeTransferFrom(address,address,uint256,bytes)",
     ]) {
-      expect(reputation.getFunction(functionName)).not.to.equal(null);
+      expect(identity.getFunction(signature), signature).not.to.equal(null);
     }
-    for (const functionName of [
-      "validationRequest",
-      "validationResponse",
-      "getValidationStatus",
-      "getSummary",
+    for (const signature of [
+      "giveFeedback(uint256,int128,uint8,string,string,string,string,bytes32)",
+      "readFeedback(uint256,address,uint64)",
+      "readAllFeedback(uint256,address[],string,string,bool)",
+      "revokeFeedback(uint256,uint64)",
+      "appendResponse(uint256,address,uint64,string,bytes32)",
+      "getSummary(uint256,address[],string,string)",
     ]) {
-      expect(validation.getFunction(functionName)).not.to.equal(null);
+      expect(reputation.getFunction(signature), signature).not.to.equal(null);
     }
+    for (const signature of [
+      "validationRequest(address,uint256,string,bytes32)",
+      "validationResponse(bytes32,uint8,string,bytes32,string)",
+      "getValidationStatus(bytes32)",
+      "getSummary(uint256,address[],string)",
+      "getAgentValidations(uint256)",
+      "getValidatorRequests(address)",
+    ]) {
+      expect(validation.getFunction(signature), signature).not.to.equal(null);
+    }
+
+    expect(
+      identity.getEvent("Registered(uint256,string,address)"),
+    ).not.to.equal(null);
+    expect(
+      reputation.getEvent(
+        "NewFeedback(uint256,address,uint64,int128,uint8,string,string,string,string,string,bytes32)",
+      ),
+    ).not.to.equal(null);
+    expect(
+      validation.getEvent(
+        "ValidationResponse(address,uint256,bytes32,uint8,string,bytes32,string)",
+      ),
+    ).not.to.equal(null);
   });
 
   it("rejects unsafe IDs and malformed required registration fields", () => {
@@ -154,6 +179,30 @@ describe("ERC-8004 integration configuration and registrations", () => {
     invalidRegistration.name = "agent";
     expect(() => validateAgentRegistrationFile(invalidRegistration)).to.throw(
       "eip155:<chainId>",
+    );
+  });
+
+  it("rejects malformed agent services and empty registration references", () => {
+    const registration = createAgentRegistrationFile({
+      chainId: 11142220n,
+      agentId: 7n,
+      name: "Test agent",
+      description: "Local registration-file validation fixture.",
+      image: "https://example.invalid/agents/7.png",
+      services: [{ name: "web", endpoint: "https://example.invalid" }],
+      x402Support: false,
+      active: true,
+    });
+
+    registration.services[0].endpoint = " ";
+    expect(() => validateAgentRegistrationFile(registration)).to.throw(
+      "non-empty name and endpoint",
+    );
+
+    registration.services[0].endpoint = "https://example.invalid";
+    registration.registrations = [];
+    expect(() => validateAgentRegistrationFile(registration)).to.throw(
+      "at least one registration reference",
     );
   });
 
