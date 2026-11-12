@@ -1,4 +1,4 @@
-import { ethers, network } from "hardhat";
+import hre, { ethers, network } from "hardhat";
 import * as fs from "fs";
 import * as path from "path";
 import {
@@ -84,6 +84,30 @@ async function main() {
     throw new Error("Identity-link deployment transaction did not succeed.");
   }
   const address = await link.getAddress();
+  console.log(`Confirmed deployment at ${address}`);
+  console.log(`Transaction: ${transaction.hash}`);
+
+  await hre.run("verify:blockscout", {
+    address,
+    contract: "contracts/CeloHTERC8004IdentityLink.sol:CeloHTERC8004IdentityLink",
+  });
+
+  const verificationResponse = await fetch(
+    `${config.explorerUrl}/api/v2/smart-contracts/${address}`,
+  );
+  if (!verificationResponse.ok) {
+    throw new Error(
+      `Could not confirm Blockscout source verification: HTTP ${verificationResponse.status}.`,
+    );
+  }
+  const verificationResult = (await verificationResponse.json()) as {
+    is_verified?: boolean;
+  };
+  if (verificationResult.is_verified !== true) {
+    throw new Error(
+      "Blockscout has not confirmed the identity-link source verification.",
+    );
+  }
 
   const manifest = {
     network: config.network,
@@ -99,15 +123,12 @@ async function main() {
     deploymentTransactionHash: transaction.hash,
     deploymentBlock: receipt.blockNumber,
     deployer: deployer.address,
-    sourceVerificationStatus: "PENDING",
-    explorerUrl: `${config.explorerUrl}/address/${address}`,
+    sourceVerificationStatus: "VERIFIED",
+    explorerUrl: `${config.explorerUrl}/address/${address}#code`,
   };
   fs.writeFileSync(outFile, JSON.stringify(manifest, null, 2));
   console.log(`CeloHT ERC-8004 identity link deployed at ${address}`);
   console.log(`Transaction: ${transaction.hash}`);
-  console.log(
-    "Source verification remains pending until Blockscout confirms it.",
-  );
   console.log(`Deployment record: ${outFile}`);
 }
 

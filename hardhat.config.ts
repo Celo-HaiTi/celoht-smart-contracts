@@ -55,6 +55,19 @@ const config: HardhatUserConfig = {
       },
     ],
   },
+  blockscout: {
+    enabled: true,
+    customChains: [
+      {
+        network: "celoSepolia",
+        chainId: CELO_SEPOLIA_CHAIN_ID,
+        urls: {
+          apiURL: "https://celo-sepolia.blockscout.com/api",
+          browserURL: "https://celo-sepolia.blockscout.com",
+        },
+      },
+    ],
+  },
   gasReporter: {
     enabled: process.env.REPORT_GAS === "true",
     currency: "USD",
