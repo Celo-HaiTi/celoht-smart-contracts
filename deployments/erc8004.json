@@ -1,0 +1,40 @@
+{
+  "sourceRepository": "https://github.com/erc-8004/erc-8004-contracts",
+  "sourceCommit": "b9e466c250744a7e06b13dff9d3c2844ed64f825",
+  "specification": "https://eips.ethereum.org/EIPS/eip-8004",
+  "checkedAt": "2026-11-12",
+  "networks": {
+    "celoSepolia": {
+      "chainId": 11142220,
+      "explorer": "https://celo-sepolia.blockscout.com",
+      "identityRegistry": {
+        "address": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+        "sourceVerified": true
+      },
+      "reputationRegistry": {
+        "address": "0x8004B663056A597Dffe9eCcC1965A193B7388713",
+        "sourceVerified": true
+      },
+      "validationRegistry": {
+        "address": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+        "sourceVerified": false
+      }
+    },
+    "celoMainnet": {
+      "chainId": 42220,
+      "explorer": "https://celo.blockscout.com",
+      "identityRegistry": {
+        "address": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+        "sourceVerified": true
+      },
+      "reputationRegistry": {
+        "address": "0x8004BAa17C55a88189AE136b182e5fdA19dE9b63",
+        "sourceVerified": true
+      },
+      "validationRegistry": {
+        "address": "0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58",
+        "sourceVerified": true
+      }
+    }
+  }
+}

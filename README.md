@@ -2,11 +2,11 @@
 
 CeloHT is a Celo-native protocol ecosystem for agent coordination, service payments, education support, reforestation incentives, and transparent governance. The system is designed around USDm settlement, with CELO used strictly for gas and network operations.
 
-This repository contains the testnet-ready smart-contract stack and operational tooling for deploying and validating the protocol on supported Celo networks. Mainnet still requires an independent security audit and operational approval.
+This repository contains the smart-contract stack and operational tooling for deploying and validating the protocol on supported Celo networks. Mainnet still requires an independent security audit and operational approval.
 
-## Project status
+## Baseline project status
 
-Repository state as of 2026-09-05:
+Existing CeloHT deployment status recorded as of 2026-09-05:
 
 - Hardhat compilation succeeds
 - Test suite passes: 108 tests passing
@@ -15,6 +15,10 @@ Repository state as of 2026-09-05:
 - The five deployed contracts are verified on Celo Sepolia Blockscout
 - No independent third-party audit is claimed
 - Mainnet deployment is not claimed or enabled
+
+The ERC-8004 integration was added after this baseline and has not yet been
+compiled, tested, exported, or verified with live Celo Sepolia transactions.
+The baseline results above do not validate the ERC-8004 changes.
 
 ## Core protocol principles
 
@@ -31,6 +35,8 @@ The protocol is organized around five smart-contract domains:
 
 1. Agent Registry
    - Tracks agent identities, role assignments, and registry state
+   - ERC-8004 Identity, Reputation, and Validation use the official Celo
+     registry deployments; CeloHT identity links are maintained separately
 2. Service Payments
    - Handles settlement for paid services and split enforcement
 3. Education
@@ -52,14 +58,32 @@ Current testnet deployment status:
 - Contract addresses, deployment blocks, transaction hashes, and verification status are in the deployment manifest
 - Deployment validation scripts enforce address correctness and environment checks for future manual deployments
 
-## Deployment readiness
+## Deployment prerequisites
 
-The repo is deployment-ready in code and tooling, but not operationally live until all real-world requirements are satisfied:
+Passing the baseline checks does not make the repository or ERC-8004
+integration production-ready. Before any live network action, the applicable
+code and operational requirements must be independently verified:
 
 - valid environment variables loaded from `.env`
 - funded deployer wallet with enough CELO for gas
 - target network selected explicitly
 - human approval to proceed with a live network action
+
+## ERC-8004 Trustless Agents
+
+Official ERC-8004 registry addresses and chain checks are documented in
+[ERC8004_INTEGRATION.md](ERC8004_INTEGRATION.md). The integration preserves
+the existing CeloHT Agent Registry and Service Payments interfaces and adds a
+separate identity-link adapter. ERC-8004 registries are not redeployed.
+
+The adapter's Sepolia deployment is a separate manual action; the production
+dApp, backend, indexer, and Supabase repositories are not part of this
+contracts checkout. See [AGENT_REGISTRATION.md](AGENT_REGISTRATION.md),
+[AGENT_REPUTATION.md](AGENT_REPUTATION.md),
+[AGENT_VALIDATION.md](AGENT_VALIDATION.md),
+[SECURITY_REVIEW.md](SECURITY_REVIEW.md), and
+[DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md). Mainnet activation is not
+automatic or claimed ready.
 
 ## Prerequisites
 

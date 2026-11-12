@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import hardhatConfig, {
+  CELO_MAINNET_CHAIN_ID,
   CELO_SEPOLIA_CHAIN_ID,
   CELO_SEPOLIA_RPC_URL,
 } from "../hardhat.config";
@@ -109,5 +110,14 @@ describe("deployment configuration", () => {
     expect(loadDeploymentConfig("celoSepolia").usdm).to.equal(
       mockEnvironment.USDM_ADDRESS_CELO_SEPOLIA,
     );
+  });
+
+  it("configures Mainnet for read-only checks without a transaction signer", () => {
+    const celoMainnet = hardhatConfig.networks?.celoMainnet;
+    expect(celoMainnet).to.include({
+      chainId: CELO_MAINNET_CHAIN_ID,
+      url: process.env.CELO_MAINNET_RPC_URL || "https://forno.celo.org",
+    });
+    expect(celoMainnet).not.to.have.property("accounts");
   });
 });

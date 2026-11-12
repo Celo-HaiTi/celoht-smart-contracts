@@ -114,6 +114,24 @@ ID tied 1:1 to the calling wallet. Only `agentId`, `wallet`, `registeredAt`,
 identity-verification result set by `AGENT_ADMIN_ROLE` — this contract never
 performs identity verification itself and stores no personal data.
 
+### ERC-8004 identity and trust
+
+The ERC-8004 registries are external official contracts, not CeloHT-owned
+duplicates. The network addresses are pinned in
+[`deployments/erc8004.json`](deployments/erc8004.json). A separate
+`CeloHTERC8004IdentityLink` adapter associates one existing CeloHT agent ID
+with one official ERC-8004 identity ID. It does not alter the legacy registry
+or Service Payments ABI, and it checks the CeloHT wallet plus ERC-8004 owner
+or operator authorization at link time. Consumers must re-check the link
+after ERC-721 transfers.
+
+The ERC-8004 `agentWallet` is independently verifiable through the official
+Identity Registry. Changing it does not change the wallet used by the
+existing CeloHT Service Payments contract. Reputation and validation remain
+direct calls to the official registries. See
+[`ERC8004_INTEGRATION.md`](ERC8004_INTEGRATION.md) for registry addresses,
+verification status, and the integration boundary.
+
 ## Education
 
 See "Design decision" above. Certificates are plain structs with a unique

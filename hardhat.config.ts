@@ -3,8 +3,11 @@ import "@nomicfoundation/hardhat-toolbox";
 import "dotenv/config";
 
 export const CELO_SEPOLIA_CHAIN_ID = 11142220;
+export const CELO_MAINNET_CHAIN_ID = 42220;
 export const CELO_SEPOLIA_RPC_URL =
   "https://forno.celo-sepolia.celo-testnet.org";
+export const CELO_MAINNET_RPC_URL =
+  process.env.CELO_MAINNET_RPC_URL || "https://forno.celo.org";
 
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
 const sepoliaRpcUrl = process.env.SEPOLIA_RPC_URL || CELO_SEPOLIA_RPC_URL;
@@ -28,6 +31,10 @@ const config: HardhatUserConfig = {
       url: sepoliaRpcUrl,
       chainId: CELO_SEPOLIA_CHAIN_ID,
       accounts,
+    },
+    celoMainnet: {
+      url: CELO_MAINNET_RPC_URL,
+      chainId: CELO_MAINNET_CHAIN_ID,
     },
   },
   etherscan: {

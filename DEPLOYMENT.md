@@ -106,3 +106,21 @@ verification result.
 3. Fund the deployer address with at least `0.10 CELO` on Celo Sepolia.
 4. Review the compile, test, and readiness outputs.
 5. Manually dispatch the deployment workflow.
+
+## ERC-8004 registry use
+
+The official ERC-8004 Identity, Reputation, and Validation proxies are already
+deployed on Celo Sepolia and Celo Mainnet. CeloHT uses those addresses and
+does not deploy replacement registries. Run the read-only Sepolia check with:
+
+```sh
+npm run check:erc8004
+```
+
+The CeloHT ERC-8004 identity-link adapter is a separate, optional Sepolia
+deployment. Review [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) and
+[SECURITY_REVIEW.md](SECURITY_REVIEW.md) before manually running
+`npm run deploy:erc8004-link`. This command is Sepolia-only and is never part
+of the existing full protocol deployment workflow. The official registry
+addresses and current source-verification state are in
+[`deployments/erc8004.json`](deployments/erc8004.json).
