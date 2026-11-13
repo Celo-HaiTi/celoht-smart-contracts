@@ -1,0 +1,21 @@
+{
+  "network": "celoSepolia",
+  "chainId": 11142220,
+  "contract": "CeloHTERC8004IdentityLink",
+  "address": "0x13342C0Ff35646cE0b343da9076d60f17823AB11",
+  "celoHTAgentRegistry": "0x7C5bF20191f6b467aAcd2DD7693110cc4c17Cc2e",
+  "identityRegistry": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
+  "reputationRegistry": "0x8004B663056A597Dffe9eCcC1965A193B7388713",
+  "validationRegistry": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
+  "deploymentTransactionHash": "0x401cdc509d2f1d4770932ea01d80a8d324fb688a68e23686fe396b5573720c58",
+  "deploymentBlock": 41202747,
+  "deploymentTimestamp": "2026-11-12T12:32:15.000Z",
+  "deployer": "0xAC4F2AE7127150eAf411E7Be774531af9c94Bb66",
+  "compilerVersion": "0.8.24",
+  "optimizerEnabled": true,
+  "optimizerRuns": 200,
+  "deployedBytecodeBytes": 2328,
+  "sourceVerificationStatus": "VERIFIED",
+  "verificationSource": "Celo Sepolia Blockscout",
+  "explorerUrl": "https://celo-sepolia.blockscout.com/address/0x13342C0Ff35646cE0b343da9076d60f17823AB11#code"
+}

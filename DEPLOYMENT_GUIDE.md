@@ -23,13 +23,19 @@ command. No Mainnet deployment command is provided.
    npm ci
    npm run compile
    npm test
+   npm run test:erc8004:fork
    npm run check:erc8004
    ```
 
    The preflight validates chain ID, registry bytecode, ERC-721 support, and
    the Identity Registry addresses returned by the Reputation and Validation
-   registries. Celo Sepolia Validation source verification is currently
-   reported as false; resolve that before relying on it for production trust.
+   registries, plus the EIP-1967 implementation slots and implementation
+   bytecode. Blockscout now reports the Validation proxy and implementation
+   source as verified; the implementation source matches the pinned official
+   source commit. Source verification does not establish validator
+   independence or replace an external audit.
+   The fork suite runs behavior tests against the Sepolia deployed bytecode
+   in a local simulation; it sends no transaction to Celo Sepolia.
 
 4. After review and explicit operator approval, manually deploy only the
    CeloHT link adapter:
@@ -51,11 +57,12 @@ command. No Mainnet deployment command is provided.
    The generated config contains official registry ABIs/addresses and shows
    the link adapter as `NOT DEPLOYED` until a real deployment record exists.
 
-6. Use a connected wallet to run the registration, URI, link, feedback, and
+6. Use a dedicated, funded Celo Sepolia test wallet to run the registration, URI, link, feedback, and
    validation flows in [`AGENT_REGISTRATION.md`](AGENT_REGISTRATION.md),
    [`AGENT_REPUTATION.md`](AGENT_REPUTATION.md), and
-   [`AGENT_VALIDATION.md`](AGENT_VALIDATION.md). Retain only confirmed chain
-   receipts as successful transactions.
+   [`AGENT_VALIDATION.md`](AGENT_VALIDATION.md). Record transaction hashes,
+   confirmed receipts, emitted events, and resulting state. No such write
+   transactions are currently recorded for this integration.
 
 No live Sepolia write transaction is performed automatically by the test,
 compile, export, or preflight commands.

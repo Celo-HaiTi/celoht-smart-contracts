@@ -16,16 +16,25 @@ Existing CeloHT deployment status recorded as of 2026-09-05:
 - No independent third-party audit is claimed
 - Mainnet deployment is not claimed or enabled
 
-The ERC-8004 integration was added after this baseline and has not yet been
-compiled, tested, exported, or verified with live Celo Sepolia transactions.
-The baseline results above do not validate the ERC-8004 changes.
+The ERC-8004 integration has passed a read-only Celo Sepolia registry
+preflight. This does not constitute a live write test of registration,
+reputation, validation, or the identity-link adapter. No identity-link
+deployment address or transaction evidence is recorded. See
+[ERC8004_INTEGRATION.md](ERC8004_INTEGRATION.md) and
+[SECURITY_REVIEW.md](SECURITY_REVIEW.md) for verified registry and test status.
+
+Current local verification (2026-11-12): 125 standard Hardhat tests and 3
+local-fork ERC-8004 behavior tests pass; TypeScript, lint, formatting, and the
+production mock guard pass. The fork suite does not broadcast transactions to
+Sepolia. Registry source verification and the remaining live-test blockers
+are recorded in the ERC-8004 integration and security review documents.
 
 ## Core protocol principles
 
 - No CeloHT token is created or issued
 - No governance token, reward token, or staking token is used
 - USDm is the settlement asset for all functional payments
-- CELO is treated as the network gas asset only
+- CELO is used for network gas and governance
 - On-chain rules enforce service split logic and governance constraints
 - Mainnet deployment is intentionally explicit and not allowed by default
 

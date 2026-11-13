@@ -19,6 +19,17 @@ export interface ERC8004NetworkConfig {
   };
 }
 
+export interface ERC8004DeploymentConfig extends ERC8004NetworkConfig {
+  implementations: {
+    identityRegistry: string;
+    reputationRegistry: string;
+    validationRegistry: string;
+  };
+}
+
+const EIP1967_IMPLEMENTATION_SLOT =
+  "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+
 export const ERC8004_NETWORKS: Readonly<
   Record<ERC8004NetworkConfig["network"], ERC8004NetworkConfig>
 > = {
@@ -63,6 +74,9 @@ export const ERC8004_NETWORKS: Readonly<
 export const ERC8004_ABIS = {
   identity: [
     "function supportsInterface(bytes4 interfaceId) view returns (bool)",
+    "function balanceOf(address owner) view returns (uint256)",
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
     "function register() returns (uint256 agentId)",
     "function register(string agentURI) returns (uint256 agentId)",
     "function register(string agentURI, tuple(string metadataKey, bytes metadataValue)[] metadata) returns (uint256 agentId)",
@@ -73,6 +87,7 @@ export const ERC8004_ABIS = {
     "function setApprovalForAll(address operator, bool approved)",
     "function transferFrom(address from, address to, uint256 agentId)",
     "function safeTransferFrom(address from, address to, uint256 agentId)",
+    "function safeTransferFrom(address from, address to, uint256 agentId, bytes data)",
     "function tokenURI(uint256 agentId) view returns (string)",
     "function setAgentURI(uint256 agentId, string newURI)",
     "function isAuthorizedOrOwner(address spender, uint256 agentId) view returns (bool)",
@@ -84,6 +99,9 @@ export const ERC8004_ABIS = {
     "event Registered(uint256 indexed agentId, string agentURI, address indexed owner)",
     "event MetadataSet(uint256 indexed agentId, string indexed indexedMetadataKey, string metadataKey, bytes metadataValue)",
     "event URIUpdated(uint256 indexed agentId, string newURI, address indexed updatedBy)",
+    "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)",
+    "event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId)",
+    "event ApprovalForAll(address indexed owner, address indexed operator, bool approved)",
   ] as const,
   reputation: [
     "function getIdentityRegistry() view returns (address)",
@@ -137,7 +155,7 @@ export function getERC8004NetworkConfig(
 export async function assertERC8004Deployment(
   provider: Provider,
   expectedChainId?: bigint | number,
-): Promise<ERC8004NetworkConfig> {
+): Promise<ERC8004DeploymentConfig> {
   const actualChainId = (await provider.getNetwork()).chainId;
   const config = getERC8004NetworkConfig(expectedChainId ?? actualChainId);
   if (actualChainId !== config.chainId) {
@@ -146,10 +164,15 @@ export async function assertERC8004Deployment(
     );
   }
 
-  for (const [label, address] of [
-    ["IdentityRegistry", config.identityRegistry],
-    ["ReputationRegistry", config.reputationRegistry],
-    ["ValidationRegistry", config.validationRegistry],
+  const implementations: ERC8004DeploymentConfig["implementations"] = {
+    identityRegistry: "",
+    reputationRegistry: "",
+    validationRegistry: "",
+  };
+  for (const [label, key, address] of [
+    ["IdentityRegistry", "identityRegistry", config.identityRegistry],
+    ["ReputationRegistry", "reputationRegistry", config.reputationRegistry],
+    ["ValidationRegistry", "validationRegistry", config.validationRegistry],
   ] as const) {
     if (
       !isAddress(address) ||
@@ -162,6 +185,27 @@ export async function assertERC8004Deployment(
         `No contract bytecode for ERC-8004 ${label} at ${address} on chain ${config.chainId}.`,
       );
     }
+
+    const implementationSlot = await provider.getStorage(
+      address,
+      EIP1967_IMPLEMENTATION_SLOT,
+    );
+    const implementationAddress = getAddress(
+      `0x${implementationSlot.slice(-40)}`,
+    );
+    if (
+      implementationAddress === "0x0000000000000000000000000000000000000000"
+    ) {
+      throw new Error(
+        `No EIP-1967 implementation address for ERC-8004 ${label} at ${address}.`,
+      );
+    }
+    if ((await provider.getCode(implementationAddress)) === "0x") {
+      throw new Error(
+        `No implementation bytecode for ERC-8004 ${label} at ${implementationAddress}.`,
+      );
+    }
+    implementations[key] = implementationAddress;
   }
 
   const [isERC721, reputationIdentity, validationIdentity] = await Promise.all([
@@ -196,7 +240,7 @@ export async function assertERC8004Deployment(
     );
   }
 
-  return config;
+  return { ...config, implementations };
 }
 
 export async function getERC8004Contracts(

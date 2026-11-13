@@ -7,6 +7,12 @@ contract MockERC8004IdentityRegistry {
     mapping(uint256 agentId => address owner) private _owners;
     mapping(uint256 agentId => address operator) private _operators;
 
+    function supportsInterface(
+        bytes4 interfaceId
+    ) external pure returns (bool) {
+        return interfaceId == 0x80ac58cd;
+    }
+
     function mint(address owner, uint256 agentId) external {
         require(owner != address(0), "zero owner");
         require(_owners[agentId] == address(0), "already minted");

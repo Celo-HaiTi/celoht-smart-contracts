@@ -9,15 +9,30 @@
       "explorer": "https://celo-sepolia.blockscout.com",
       "identityRegistry": {
         "address": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
-        "sourceVerified": true
+        "sourceVerified": true,
+        "proxyType": "EIP-1967",
+        "implementation": {
+          "address": "0x7274e874CA62410a93Bd8bf61c69d8045E399c02",
+          "sourceVerified": true
+        }
       },
       "reputationRegistry": {
         "address": "0x8004B663056A597Dffe9eCcC1965A193B7388713",
-        "sourceVerified": true
+        "sourceVerified": true,
+        "proxyType": "EIP-1967",
+        "implementation": {
+          "address": "0x16e0FA7f7C56B9a767E34B192B51f921BE31dA34",
+          "sourceVerified": true
+        }
       },
       "validationRegistry": {
         "address": "0x8004Cb1BF31DAf7788923b405b754f57acEB4272",
-        "sourceVerified": false
+        "sourceVerified": true,
+        "proxyType": "EIP-1967",
+        "implementation": {
+          "address": "0xDB31f5d9167f8ebc8B30FbBF814c4d297c2D7F99",
+          "sourceVerified": true
+        }
       }
     },
     "celoMainnet": {

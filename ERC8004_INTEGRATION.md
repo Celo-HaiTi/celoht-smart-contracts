@@ -21,12 +21,26 @@ this repository does not redeploy the registries.
 | Celo Mainnet |    `42220` | [`0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`](https://celo.blockscout.com/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432)         | [`0x8004BAa17C55a88189AE136b182e5fdA19dE9b63`](https://celo.blockscout.com/address/0x8004BAa17C55a88189AE136b182e5fdA19dE9b63)         | [`0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58`](https://celo.blockscout.com/address/0x8004Cc8439f36fd5F9F049D9fF86523Df6dAAB58)         |
 
 Blockscout reports deployed code for all six proxies. Identity and Reputation
-are source-verified on both networks. Validation is source-verified on Celo
-Mainnet; the Celo Sepolia Validation proxy is listed by the official project
-but its implementation source was not verified on Blockscout at the time this
-configuration was checked. The preflight checks chain ID, bytecode, ERC-721
-support, and that both trust registries point at the configured identity
-registry. This is not a substitute for source review or a live write test.
+are source-verified on both networks. On Celo Sepolia, Blockscout reports
+verified source for the proxy and implementation of each registry. The
+three implementation source files match the pinned upstream commit
+`b9e466c250744a7e06b13dff9d3c2844ed64f825` byte-for-byte. The current
+Sepolia EIP-1967 implementation addresses are recorded in
+[`deployments/erc8004.json`](deployments/erc8004.json); the preflight reads the
+live implementation slots and confirms implementation bytecode rather than
+trusting that snapshot.
+
+The read-only preflight was run on 2026-11-12 and succeeded: chain ID
+`11142220`, all proxy and implementation bytecode present, Identity reports
+ERC-721 support, and Reputation and Validation return the configured Identity
+Registry address. `npm run test:erc8004:fork` also tests registry behavior
+against this deployed code on a local Hardhat fork. The fork uses a local
+simulation chain ID and does not broadcast transactions to Celo Sepolia.
+Neither check proves live write execution. No registry write transaction or
+CeloHT identity-link deployment was performed; this environment had no
+dedicated test wallet private key or recorded funded wallet. The local fork
+uses simulation chain ID `11155111` for its EVM and signatures; it is not a
+transaction on chain `11142220`.
 
 ## Integration boundary
 
@@ -51,7 +65,7 @@ registry. This is not a substitute for source review or a live write test.
 
 This checkout contains Solidity contracts and deployment tooling only. It has
 no backend, indexer, Supabase migrations, or dApp source. The generated
-[`exportDeployment.ts`](exportDeployment.ts) script now includes ERC-8004
+[`exportDeployment.ts`](exportDeployment.ts) script includes ERC-8004
 addresses and ABIs in its output, and marks the link contract `NOT DEPLOYED`
 until a separate manual Sepolia deployment. The committed
 [`deployments/dapp-config.json`](deployments/dapp-config.json) has not yet been
@@ -63,6 +77,7 @@ is claimed by this repository change.
 ```sh
 npm run compile
 npm test
+npm run test:erc8004:fork
 npm run check:erc8004
 npm run export:deployment
 ```

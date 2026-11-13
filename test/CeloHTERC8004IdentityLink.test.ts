@@ -57,6 +57,21 @@ describe("CeloHTERC8004IdentityLink", () => {
     expect(await link.isLinkOwnerCurrent(1)).to.equal(true);
   });
 
+  it("marks revoked ERC-721 operator authorization stale and permits repair", async () => {
+    const { alice, bob, identityRegistry, link } =
+      await loadFixture(deployFixture);
+    await identityRegistry.mint(bob.address, 2);
+    await identityRegistry.connect(bob).approve(alice.address, 2);
+    await link.connect(alice).linkAgentIdentity(1, 2);
+
+    await identityRegistry.connect(bob).approve(bob.address, 2);
+    expect(await link.isLinkOwnerCurrent(1)).to.equal(false);
+
+    await link.connect(alice).unlinkAgentIdentity(1);
+    await link.connect(alice).linkAgentIdentity(1, 0);
+    expect(await link.isLinkOwnerCurrent(1)).to.equal(true);
+  });
+
   it("keeps CeloHT and ERC-8004 links one-to-one", async () => {
     const { alice, bob, link } = await loadFixture(deployFixture);
     await link.connect(alice).linkAgentIdentity(1, 0);
@@ -111,5 +126,41 @@ describe("CeloHTERC8004IdentityLink", () => {
     await agentRegistry.connect(admin).setAgentStatus(1, false);
 
     expect(await link.isLinkOwnerCurrent(1)).to.equal(false);
+  });
+
+  it("rejects zero, code-free, and non-ERC-721 registry addresses", async () => {
+    const { agentRegistry, identityRegistry } =
+      await loadFixture(deployFixture);
+    const Link = await ethers.getContractFactory("CeloHTERC8004IdentityLink");
+    const token = await (await ethers.getContractFactory("MockUSDm")).deploy();
+    const noCode = "0x0000000000000000000000000000000000000001";
+
+    await expect(
+      Link.deploy(ethers.ZeroAddress, await identityRegistry.getAddress()),
+    )
+      .to.be.revertedWithCustomError(Link, "ZeroAddress")
+      .withArgs();
+    await expect(Link.deploy(noCode, await identityRegistry.getAddress()))
+      .to.be.revertedWithCustomError(Link, "AddressHasNoCode")
+      .withArgs(noCode);
+    await expect(Link.deploy(await agentRegistry.getAddress(), noCode))
+      .to.be.revertedWithCustomError(Link, "AddressHasNoCode")
+      .withArgs(noCode);
+    await expect(
+      Link.deploy(await agentRegistry.getAddress(), await token.getAddress()),
+    )
+      .to.be.revertedWithCustomError(Link, "UnsupportedIdentityRegistry")
+      .withArgs(await token.getAddress());
+  });
+
+  it("rejects unregistered CeloHT and ERC-8004 agent IDs", async () => {
+    const { alice, agentRegistry, link } = await loadFixture(deployFixture);
+
+    await expect(link.connect(alice).linkAgentIdentity(999, 0))
+      .to.be.revertedWithCustomError(agentRegistry, "AgentNotFound")
+      .withArgs(999);
+    await expect(
+      link.connect(alice).linkAgentIdentity(1, 999),
+    ).to.be.revertedWith("unknown agent");
   });
 });

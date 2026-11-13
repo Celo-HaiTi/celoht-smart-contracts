@@ -37,6 +37,7 @@ contract CeloHTERC8004IdentityLink {
 
     error ZeroAddress();
     error AddressHasNoCode(address target);
+    error UnsupportedIdentityRegistry(address target);
     error AgentInactive(uint256 celoHTAgentId);
     error NotCeloHTAgentWallet(uint256 celoHTAgentId, address caller);
     error NotERC8004AgentAuthorized(uint256 erc8004AgentId, address caller);
@@ -60,6 +61,15 @@ contract CeloHTERC8004IdentityLink {
 
         celoHTAgentRegistry = ICeloHTAgentRegistry(celoHTRegistry);
         identityRegistry = IERC8004IdentityRegistry(erc8004IdentityRegistry);
+        try identityRegistry.supportsInterface(0x80ac58cd) returns (
+            bool supported
+        ) {
+            if (!supported) {
+                revert UnsupportedIdentityRegistry(erc8004IdentityRegistry);
+            }
+        } catch {
+            revert UnsupportedIdentityRegistry(erc8004IdentityRegistry);
+        }
     }
 
     function linkAgentIdentity(

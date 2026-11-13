@@ -9,6 +9,6 @@
     "declaration": true,
     "skipLibCheck": true
   },
-  "include": ["./*.ts", "./test", "./typechain-types"],
+  "include": ["./*.ts", "./test", "./test-fork", "./typechain-types"],
   "files": ["./hardhat.config.ts"]
 }
